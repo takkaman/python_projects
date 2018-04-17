@@ -1,5 +1,6 @@
 # coding=utf-8
 
+
 def get_height(node):
     return node.height if node else -1
 
