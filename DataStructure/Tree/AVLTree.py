@@ -1,3 +1,6 @@
+from TreeTraverse import *
+
+
 class AVLNode(object):
     def __init__(self, key):
         self.key = key
@@ -16,24 +19,6 @@ def get_maximun(root):
 
 def get_minimun(root):
     return get_minimun(root.left) if root.left else root
-
-
-def preorder(root):
-    if root:
-        print(root.key)
-        preorder(root.left)
-        preorder(root.right)
-
-
-def levelorder(root):
-    pass
-
-
-def postorder(root):
-    if root:
-        postorder(root.left)
-        postorder(root.right)
-        print(root.key)
 
 
 def llrotate(root):
@@ -138,10 +123,10 @@ def main():
     for number in number_list:
         node = AVLNode(number)
         tree.insert(node)
-    preorder(tree.root)
+    pre_order(tree.root)
     tree.delete(4)
     print('==========')
-    preorder(tree.root)
+    pre_order(tree.root)
 
 
 if __name__ == '__main__':
