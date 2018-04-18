@@ -123,10 +123,12 @@ def main():
     for number in number_list:
         node = AVLNode(number)
         tree.insert(node)
-    pre_order(tree.root)
-    tree.delete(4)
+    zig_zag_level_order(tree.root)
     print('==========')
     pre_order(tree.root)
+    # tree.delete(4)
+    # print('==========')
+    # pre_order(tree.root)
 
 
 if __name__ == '__main__':
