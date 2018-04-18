@@ -77,3 +77,10 @@ def post_order(root):
         post_order(root.left)
         post_order(root.right)
         print(root.key)
+
+        
+def in_order(root):
+    if root:
+        in_order(root.left)
+        print(root.key)
+        in_order(root.right)
