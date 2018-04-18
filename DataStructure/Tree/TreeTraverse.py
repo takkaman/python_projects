@@ -10,6 +10,7 @@ def pre_order(root):
 
 def level_lorder(root):
     q = Queue()
+    q.put(1)
 
 
 def zig_zag_level_order(root):
