@@ -1,0 +1,235 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Car rental
+{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static',filename = 'css/car.css') }}">
+
+{% endblock %}
+
+
+
+
+{% block main %}
+<form action="/booking/savecar"  method="post" >
+
+    <input id="car_name" name="name" value="{{ name }}">
+    <div class="background" style="position:absolute; top:50px;left:0px;"><img alt="Brand"
+                                                                                src="{{ url_for('static',filename='images/faroe-islands_make-travel_road-trip_1.jpg') }}"
+                                                                                width="1520" height="300"></div>
+    <div class="title"> <h2>Cars at this pod</h2><br>{{ name }}</div>
+
+
+        <div class="smallcar"><img alt="Brand" style="position: relative;top:350px"
+             src="{{ url_for('static',filename='images/Hyundai-Ioniq-Hybrid-Blue.png') }}" width="240" height="100"><br></div>
+
+    <div class="carph"><img alt="Brand" src="{{ url_for('static',filename='images/24hours_available-512.png') }}"
+                            width="60" height="60"></div>
+
+
+    <div class="font"> kilometer: {{ kilometer }}<br>brand: {{ brand }}<br> Seat: {{ seat }}<br> Type: {{ vehicleType }}<br>
+        {{ bluetooth }} <img alt="Brand" src="{{ url_for('static',filename='images/tick_ok_sign_4190.jpg') }}"
+                             width="10" height="10">
+        <br> Child Seat <img alt="Brand" src="{{ url_for('static',filename='images/cross.png') }}" width="10"
+                             height="10">
+    </div>
+
+    <div class="font2">
+        <br> Roof racks <img alt="Brand" src="{{ url_for('static',filename='images/cross.png') }}" width="10"
+                             height="10">
+        <br> Pet Friendly <img alt="Brand" src="{{ url_for('static',filename='images/cross.png') }}" width="10"
+                               height="10">
+        <br> Cruise Control <img alt="Brand" src="{{ url_for('static',filename='images/tick_ok_sign_4190.jpg') }}"
+                                 width="10" height="10">
+    </div>
+
+    <div class="price">
+        price: {{ price }}$/d
+    </div>
+
+
+    <div class="button"><input type="submit" href="{{ url_for('bookingcar') }}" onclick="{if(confirm('Are you confirm to book'))
+    {alert('Congratulation，Booking Success!');return true;  }return false;}"
+                               class="btn btn-warning" data-remodal-target="modal" value="BOOK NOW"></div>
+
+
+{#<div class="button">#}
+{#<a tabindex="0" class="btn btn-lg btn-danger" role="button"  type="submit" data-toggle="popover" data-trigger="focus" href="{{ url_for('booking') }}"#}
+{#   title="Dismissible popover" data-content="And here's some amazing content. It's very engaging. Right?">BOOK NOW</a>#}
+{#</div>#}
+{#    <script>$('#example').popover(options)</script>#}
+
+    <div class="time1">
+
+        <div class="btn btn-default dropdown-toggle">
+            <div class="book-form__text">Pick up Date/Time</div>
+            <select name="Bdatetime">
+                <option selected value="May">May</option>
+                <option value="January">Jan</option>
+                <option value="February">Feb</option>
+                <option value="March">Mar</option>
+                <option value="April">Apr</option>
+                <option value="May">May</option>
+                <option value="June">Jun</option>
+                <option value="Jule">Jul</option>
+                <option value="August">Aug</option>
+                <option value="September">Sept</option>
+                <option value="October">Oct</option>
+                <option value="November">Nov</option>
+                <option value="December">Dec</option>
+            </select>
+            <select name="Bday">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="14">14</option>
+                <option value="15">15</option>
+                <option value="16">16</option>
+                <option value="17">17</option>
+                <option value="18">18</option>
+                <option value="19">19</option>
+                <option value="20">20</option>
+                <option value="21">21</option>
+                <option value="22">22</option>
+                <option value="23">23</option>
+                <option value="24">24</option>
+                <option value="25">25</option>
+                <option value="26">26</option>
+                <option value="27">27</option>
+                <option value="28">28</option>
+                <option value="29">29</option>
+                <option value="30">30</option>
+                <option value="31">31</option>
+            </select>
+            <select name="Btime">
+                <option value="08:00 AM">08:00 AM</option>
+                <option value="09:00 AM">09:00 AM</option>
+                <option value="10:00 AM">10:00 AM</option>
+                <option value="11:00 AM">11:00 AM</option>
+                <option value="12:00 PM">12:00 PM</option>
+                <option value="13:00 PM">13:00 PM</option>
+                <option value="14:00 PM">14:00 PM</option>
+                <option value="15:00 PM">15:00 PM</option>
+            </select>
+        </div>
+    </div>
+<div class="time2">
+        <div class="btn btn-default dropdown-toggle">
+            <div class="book-form__text">Return Date/Time</div>
+            <select name="Rdatetime">
+                <option selected value="May">May</option>
+                <option value="January">Jan</option>
+                <option value="February">Feb</option>
+                <option value="March">Mar</option>
+                <option value="April">Apr</option>
+                <option value="May">May</option>
+                <option value="June">Jun</option>
+                <option value="Jule">Jul</option>
+                <option value="August">Aug</option>
+                <option value="September">Sept</option>
+                <option value="October">Oct</option>
+                <option value="November">Nov</option>
+                <option value="December">Dec</option>
+            </select>
+            <select name="Rday">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="14">14</option>
+                <option value="15">15</option>
+                <option value="16">16</option>
+                <option value="17">17</option>
+                <option value="18">18</option>
+                <option value="19">19</option>
+                <option value="20">20</option>
+                <option value="21">21</option>
+                <option value="22">22</option>
+                <option value="23">23</option>
+                <option value="24">24</option>
+                <option value="25">25</option>
+                <option value="26">26</option>
+                <option value="27">27</option>
+                <option value="28">28</option>
+                <option value="29">29</option>
+                <option value="30">30</option>
+                <option value="31">31</option>
+            </select>
+            <select name="Rtime">
+                <option value="08:00 AM">08:00 AM</option>
+                <option value="09:00 AM">09:00 AM</option>
+                <option value="10:00 AM">10:00 AM</option>
+                <option value="11:00 AM">11:00 AM</option>
+                <option value="12:00 PM">12:00 PM</option>
+                <option value="13:00 PM">13:00 PM</option>
+                <option value="14:00 PM">14:00 PM</option>
+                <option value="15:00 PM">15:00 PM</option>
+            </select>
+        </div>
+    </div>
+
+<div class="choose">Choose Your Time</div>
+
+<div class="timu">
+    About this pod
+    </div>
+<div class="shuoming1">
+
+The cars are located on Level 1, the cars are parked at the top of the entry ramp around the corner from the lift in dedicated bays marked with Win signs.</div>
+
+<div class="shuoming2">This car park is accessible 24 hours a day 7 days a week.</div>
+
+<div class="shuoming3">The carpark pass-card is attached to the car with a curly cord. Please do not remove the pass-card from the vehicle.</div>
+
+<div class="shuoming4">The parking pass is to be applied against the proximity sensor at the boom gate. DO NOT put the parking pass in the parking ticket slot at the boom gate.</div>
+
+<div class="shuoming5">Please use the parking pass to exit and enter the car park – DO NOT take a parking ticket from the ticket machine at the car park entrance. Doing so will make it impossible for the next member to leave the car park using the parking pass.</div>
+
+
+
+
+</form>
+
+
+
+
+<script>
+
+$.getJSON('/api/cardatas',function(json){
+    console.log(json.data[0].name);
+    //$('#car_name').val(json.data[5].name)
+});
+
+</script>
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

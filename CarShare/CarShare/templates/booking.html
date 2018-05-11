@@ -1,0 +1,461 @@
+{% extends 'base.html' %}
+{% import "_macros.html" as macros %}
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static',filename = 'css/indexcss.css') }}">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css"
+          integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.css">
+
+    <title>Marker Labels</title>
+    {% import "_macros.html" as macros %}
+    <style>
+{#    html{#}
+{#	background-color: #eaf0f2;#}
+{#}#}
+
+        .m1 {
+            position: absolute;
+            top: 70px;
+            right: 650px;
+        }
+
+        .titl {
+            position: absolute;
+            font-family: 'Consolas', 'Monaco', 'Bitstream Vera Sans Mono', monospace;
+            top: 50px;
+            right: 220px;
+        }
+
+        .gearbox {
+            position: absolute;
+            top: 110px;
+            right: 205px;
+        }
+
+        .brand1 {
+            position: absolute;
+            top: 110px;
+            right: 130px;
+        }
+
+        .brand2 {
+            position: absolute;
+            top: 160px;
+            right: 160px;
+        }
+
+        .brand3 {
+            position: absolute;
+            top: 220px;
+            right: 170px;
+        }
+
+        .brand4 {
+            position: absolute;
+            top: 250px;
+            right: 210px;
+        }
+    .si{
+         position: absolute;
+            top: 310px;
+            right: 50px;
+    }
+
+
+    </style>
+    {{ carmap.js }}
+{% endblock %}
+
+{% block main %}
+    {#    <div id="map" style="width: 100%; height: 100%; position: absolute;">#}
+    {#                 <div id="map"></div>#}
+    {#     </div>#}
+    {#<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBHJ95BAnNYLDqBNDjVdiAM-Df7sVlAnyw"></script>#}
+    {##}
+    {#    <script>#}
+    {#        var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';#}
+    {#      var labelIndex = 0;#}
+    {##}
+    {#      function initialize() {#}
+    {#        var bangalore = { lat: 12.97, lng: 77.59 };#}
+    {#        var map1 = new google.maps.Map(document.getElementById('map'), {#}
+    {#          zoom: 12,#}
+    {#          center: bangalore#}
+    {#        });#}
+    {##}
+    {#        // This event listener calls addMarker() when the map is clicked.#}
+    {#        google.maps.event.addListener(map1, 'click', function(event) {#}
+    {#          addMarker(event.latLng, map1);#}
+    {#        });#}
+    {##}
+    {#        // Add a marker at the center of the map.#}
+    {#        addMarker(bangalore, map1);#}
+    {#      }#}
+    {##}
+    {#      // Adds a marker to the map.#}
+    {#      function addMarker(location, map1) {#}
+    {#        // Add the marker at the clicked location, and add the next-available label#}
+    {#        // from the array of alphabetical characters.#}
+    {#        var marker = new google.maps.Marker({#}
+    {#          position: location,#}
+    {#          label: labels[labelIndex++ % labels.length],#}
+    {#          map: map1#}
+    {#        });#}
+    {#      }#}
+    {##}
+    {#      google.maps.event.addDomListener(window, 'load', initialize);#}
+    {#    </script>#}
+
+    {#    <div class="book-form-box">#}
+    {#        <div class="container">#}
+    {#            <div class="row">#}
+    {#                <div class="col-lg-12">#}
+    {#                    <form id="book-form" class="book-form" action="#" method="POST">#}
+    {#							<span class="book-form__title">#}
+    {#								<small>Book Now</small>#}
+    {#								<small>Best Price Online</small>#}
+    {#							</span>#}
+    {#                        <div class="book-form__block-select">#}
+    {#                            <div class="inner-block">#}
+    {#                                <div class="book-form__text">Pick up Location</div>#}
+    {#                                <select name="location">#}
+    {#                                    <option disabled>Location</option>#}
+    {#                                    <option value="Melbourne CBD">Melbourne CBD</option>#}
+    {#                                    <option value="Dockland">Dockland</option>#}
+    {#                                    <option value="East Melbourne">East Melbourne</option>#}
+    {#                                    <option selected value="South Melbourne">South Melbourne</option>#}
+    {#                                    <option value="North Melbourne">North Melbourne</option>#}
+    {#                                    <option value="West Melbourne">West Melbourne</option>#}
+    {#                                </select>#}
+    {#                            </div>#}
+    {#                            <div class="inner-block second-block">#}
+    {#                                <div class="book-form__text">Pick up Date/Time</div>#}
+    {#                                <select name="Bdatetime">#}
+    {#                                    <option selected value="Jan">Jan</option>#}
+    {#                                    <option value="February">Feb</option>#}
+    {#                                    <option value="March">Mar</option>#}
+    {#                                    <option value="April">Apr</option>#}
+    {#                                    <option value="May">May</option>#}
+    {#                                    <option value="June">Jun</option>#}
+    {#                                    <option value="Jule">Jul</option>#}
+    {#                                    <option value="August">Aug</option>#}
+    {#                                    <option value="September">Sept</option>#}
+    {#                                    <option value="October">Oct</option>#}
+    {#                                    <option value="November">Nov</option>#}
+    {#                                    <option value="December">Dec</option>#}
+    {#                                </select>#}
+    {#                                <select name="Bday">#}
+    {#                                    <option value="1">1</option>#}
+    {#                                    <option value="2">2</option>#}
+    {#                                    <option value="3">3</option>#}
+    {#                                    <option value="4">4</option>#}
+    {#                                    <option value="5">5</option>#}
+    {#                                    <option value="6">6</option>#}
+    {#                                    <option value="7">7</option>#}
+    {#                                    <option value="8">8</option>#}
+    {#                                    <option value="9">9</option>#}
+    {#                                    <option value="10">10</option>#}
+    {#                                    <option value="11">11</option>#}
+    {#                                    <option value="12">12</option>#}
+    {#                                    <option value="13">13</option>#}
+    {#                                    <option value="14">14</option>#}
+    {#                                    <option value="15">15</option>#}
+    {#                                    <option value="16">16</option>#}
+    {#                                    <option value="17">17</option>#}
+    {#                                    <option value="18">18</option>#}
+    {#                                    <option value="19">19</option>#}
+    {#                                    <option value="20">20</option>#}
+    {#                                    <option value="21">21</option>#}
+    {#                                    <option value="22">22</option>#}
+    {#                                    <option value="23">23</option>#}
+    {#                                    <option value="24">24</option>#}
+    {#                                    <option value="25">25</option>#}
+    {#                                    <option value="26">26</option>#}
+    {#                                    <option value="27">27</option>#}
+    {#                                    <option value="28">28</option>#}
+    {#                                    <option value="29">29</option>#}
+    {#                                    <option value="30">30</option>#}
+    {#                                    <option value="31">31</option>#}
+    {#                                </select>#}
+    {#                                <select name="Btime">#}
+    {#                                    <option value="08:00 AM">08:00 AM</option>#}
+    {#                                    <option value="09:00 AM">09:00 AM</option>#}
+    {#                                    <option value="10:00 AM">10:00 AM</option>#}
+    {#                                    <option value="11:00 AM">08:00 AM</option>#}
+    {#                                    <option value="12:00 PM">12:00 PM</option>#}
+    {#                                    <option value="13:00 PM">13:00 PM</option>#}
+    {#                                    <option value="14:00 PM">14:00 PM</option>#}
+    {#                                    <option value="15:00 PM">15:00 PM</option>#}
+    {#                                </select>#}
+    {#                            </div>#}
+    {##}
+    {##}
+    {#return#}
+    {##}
+    {##}
+    {#                            <div class="inner-block second-block">#}
+    {#                                <div class="book-form__text">Return Date/Time</div>#}
+    {#                                <select name="Rdatetime">#}
+    {#                                    <option selected value="Jan">Jan</option>#}
+    {#                                    <option value="February">Feb</option>#}
+    {#                                    <option value="March">Mar</option>#}
+    {#                                    <option value="April">Apr</option>#}
+    {#                                    <option value="May">May</option>#}
+    {#                                    <option value="June">Jun</option>#}
+    {#                                    <option value="Jule">Jul</option>#}
+    {#                                    <option value="August">Aug</option>#}
+    {#                                    <option value="September">Sept</option>#}
+    {#                                    <option value="October">Oct</option>#}
+    {#                                    <option value="November">Nov</option>#}
+    {#                                    <option value="December">Dec</option>#}
+    {#                                </select>#}
+    {#                                <select name="Rday">#}
+    {#                                    <option value="1">1</option>#}
+    {#                                    <option value="2">2</option>#}
+    {#                                    <option value="3">3</option>#}
+    {#                                    <option value="4">4</option>#}
+    {#                                    <option value="5">5</option>#}
+    {#                                    <option value="6">6</option>#}
+    {#                                    <option value="7">7</option>#}
+    {#                                    <option value="8">8</option>#}
+    {#                                    <option value="9">9</option>#}
+    {#                                    <option value="10">10</option>#}
+    {#                                    <option value="11">11</option>#}
+    {#                                    <option value="12">12</option>#}
+    {#                                    <option value="13">13</option>#}
+    {#                                    <option value="14">14</option>#}
+    {#                                    <option value="15">15</option>#}
+    {#                                    <option value="16">16</option>#}
+    {#                                    <option value="17">17</option>#}
+    {#                                    <option value="18">18</option>#}
+    {#                                    <option value="19">19</option>#}
+    {#                                    <option value="20">20</option>#}
+    {#                                    <option value="21">21</option>#}
+    {#                                    <option value="22">22</option>#}
+    {#                                    <option value="23">23</option>#}
+    {#                                    <option value="24">24</option>#}
+    {#                                    <option value="25">25</option>#}
+    {#                                    <option value="26">26</option>#}
+    {#                                    <option value="27">27</option>#}
+    {#                                    <option value="28">28</option>#}
+    {#                                    <option value="29">29</option>#}
+    {#                                    <option value="30">30</option>#}
+    {#                                    <option value="31">31</option>#}
+    {#                                </select>#}
+    {#                                <select name="Rtime">#}
+    {#                                    <option value="08:00 AM">08:00 AM</option>#}
+    {#                                    <option value="09:00 AM">09:00 AM</option>#}
+    {#                                    <option value="10:00 AM">10:00 AM</option>#}
+    {#                                    <option value="11:00 AM">08:00 AM</option>#}
+    {#                                    <option value="12:00 PM">12:00 PM</option>#}
+    {#                                    <option value="13:00 PM">13:00 PM</option>#}
+    {#                                    <option value="14:00 PM">14:00 PM</option>#}
+    {#                                    <option value="15:00 PM">15:00 PM</option>#}
+    {#                                </select>#}
+    {#                            </div>#}
+    {#                            <div class="inner-block">#}
+    {#                                <div class="book-form__text">Car types</div>#}
+    {#                                <select name="type">#}
+    {#                                    <option disabled>Car types</option>#}
+    {#                                    <option value="Economy">Economy</option>#}
+    {#                                    <option selected value="Compact">Compact</option>#}
+    {#                                    <option value="Convertible">Convertible</option>#}
+    {#                                    <option value="Fullsize">Fullsize</option>#}
+    {#                                    <option value="Suv">Suv</option>#}
+    {#                                    <option value="Luxury">Luxury</option>#}
+    {#                                </select>#}
+    {#                            </div>#}
+
+    {#                            <div class="inner-block second-block">#}
+    {#                                <div class="book-form__text">gearbox</div>#}
+    {#                                <select onchange="window.location=this.value;" name="gear" value="gearbox">#}
+    {#                                    <option name="Gear BOX">Gear Box</option>#}
+    {##}
+    {#                                    <option name="Manual Transmission"#}
+    {#                                            value="{{ url_for('booking') }}?tid={{ p['tid'] }}&time=1&pm={{ p['pm'] }}">#}
+    {#                                        Manual Transmission#}
+    {#                                    </option>#}
+    {#                                    <option name="Automatic Transmission"#}
+    {#                                            value="{{ url_for('booking') }}?tid={{ p['tid'] }}&time=2&pm={{ p['pm'] }}">#}
+    {#                                        Automatic Transmission#}
+    {#                                    </option>#}
+    {#                                </select>#}
+    <div class="titl">
+
+        <h3>
+            Filter Results
+        </h3>
+    </div>
+
+{#    <dir class="gearbox">#}
+{#        <button onclick="location=this.value" type="button" class="btn btn-warning" name="Manual Transmission"#}
+{#                value="{{ url_for('booking') }}?tid={{ p['tid'] }}&time=1&pm={{ p['pm'] }}">Manual#}
+{#        </button>#}
+{##}
+{#        <button onclick="location=this.value" type="button" class="btn btn-warning" name="Manual Transmission"#}
+{#                value="{{ url_for('booking') }}?tid={{ p['tid'] }}&time=2&pm={{ p['pm'] }}">Automatic#}
+{#        </button>#}
+{#    </dir>#}
+
+    <div class="brand1">
+
+        <button onclick="location=this.value" type="button" class="btn btn-primary" name="All"
+                value="{{ url_for('booking') }}">All Cars
+        </button>
+        <button onclick="location=this.value" type="button" class="btn btn-primary" name="Volkswagen"
+                value="{{ url_for('booking') }}?tid=2&time={{ p['time'] }}&pm={{ p['pm'] }}">Volkswagen
+        </button>
+        <button onclick="location=this.value" type="button" class="btn btn-primary" name="peugeot"
+                value="{{ url_for('booking') }}?tid=4&time={{ p['time'] }}&pm={{ p['pm'] }}">Peugeot
+        </button>
+       <button onclick="location=this.value" type="button" class="btn btn-primary" name="mercedesBenz"
+                value="{{ url_for('booking') }}?tid=5&time={{ p['time'] }}&pm={{ p['pm'] }}">MercedesBenz
+        </button>
+    </div>
+
+    <div class="brand2">
+
+        <button onclick="location=this.value" type="button" class="btn btn-primary" name="audi"
+                value="{{ url_for('booking') }}?tid=1&time={{ p['time'] }}&pm={{ p['pm'] }}">Audi
+        </button>
+     <button onclick="location=this.value" type="button" class="btn btn-primary" name="BMW"
+                value="{{ url_for('booking') }}?tid=3&time={{ p['time'] }}&pm={{ p['pm'] }}">BMW
+        </button>
+    <button onclick="location=this.value" type="button" class="btn btn-warning" name="Manual Transmission"
+                value="{{ url_for('booking') }}?tid={{ p['tid'] }}&time=1&pm={{ p['pm'] }}">Manual
+        </button>
+
+        <button onclick="location=this.value" type="button" class="btn btn-warning" name="Manual Transmission"
+                value="{{ url_for('booking') }}?tid={{ p['tid'] }}&time=2&pm={{ p['pm'] }}">Automatic
+        </button>
+
+    </div>
+    <div class="brand3">
+        <button onclick="location=this.value" type="button" class="fas fa-check" name="BlueTooth"
+                value="#">BlueTooth
+        </button>
+        <button onclick="location=this.value" type="button" class="fas fa-check" name="Radio"
+                value="#">Radio
+        </button>
+        <button onclick="location=this.value" type="button" class="fas fa-check" name="CD Player"
+                value="#">CD Player
+        </button>
+    </div>
+
+    <div class="brand4">
+        <button onclick="location=this.value" type="button" class="fas fa-check" name="Cruise Control"
+                value="#">Cruise Control
+            <button onclick="location=this.value" type="button" class="fas fa-check" name="GPS"
+                    value="#">GPS
+            </button>
+
+
+    </div>
+
+    {##}
+    {#                                    <option name="Automatic Transmission"#}
+    {#                                            value="{{ url_for('booking') }}?tid={{ p['tid'] }}&time=2&pm={{ p['pm'] }}">#}
+    {#                                        Automatic Transmission#}
+    {#                                    </option>#}
+
+
+
+    {##}
+    {#                            </div>#}
+    {#                            <div class="inner-block">#}
+    {#                                <div class="book-form__text">Brand</div>#}
+    {##}
+    {#                                <select onchange="window.location=this.value;" value="brand" name="brand">#}
+    {#                                    <option name="Car types">Car types</option>#}
+    {#                                    <option name="audi"#}
+    {#                                            value="{{ url_for('booking') }}?tid=1&time={{ p['time'] }}&pm={{ p['pm'] }}">#}
+    {#                                        audi#}
+    {#                                    </option>#}
+    {#                                    <option name="volkswagen"#}
+    {#                                            value="{{ url_for('booking') }}?tid=2&time={{ p['time'] }}&pm={{ p['pm'] }}">#}
+    {#                                        volkswagen#}
+    {#                                    </option>#}
+    {#                                    <option name="bmw"#}
+    {#                                            value="{{ url_for('booking') }}?tid=3&time={{ p['time'] }}&pm={{ p['pm'] }}">#}
+    {#                                        bmw#}
+    {#                                    </option>#}
+    {#                                    <option name="peugeot"#}
+    {#                                            value="{{ url_for('booking') }}?tid=4&time={{ p['time'] }}&pm={{ p['pm'] }}">#}
+    {#                                        peugeot#}
+    {#                                    </option>#}
+    {#                                    <option name="mercedesBenz"#}
+    {#                                            value="{{ url_for('booking') }}?tid=5&time={{ p['time'] }}&pm={{ p['pm'] }}">#}
+    {#                                        mercedesBenz#}
+    {#                                    </option>#}
+    {#                                    <option name="ford"#}
+    {#                                            value="{{ url_for('booking') }}?tid=6&time={{ p['time'] }}&pm={{ p['pm'] }}">#}
+    {#                                        ford#}
+    {#                                    </option>#}
+    {#                                </select>#}
+    {##}
+    {#                            </div>#}
+    {##}
+    {##}
+    {#                        </div>#}
+    {##}
+    {#                        <div class="book-form__btn">#}
+    {#                            <input type="submit" class="btn" data-remodal-target="modal" value="BOOK NOW">#}
+    {#                        </div>#}
+    {#                    </form>#}
+    {#                </div>#}
+    {#            </div>#}
+    {#        </div>#}
+    {#    </div>#}
+
+    <div class="m1"> {{ carmap.html }} </div>
+
+
+
+{#    <table class="table table-hover" width="50%">#}
+{#        {% for CarD in page_data %}#}
+{#            <tr>#}
+{#                <td> {{ CarD.name }}</td>#}
+{#                <td>  {{ sb[loop.index-1] }} km</td>#}
+{#            </tr>#}
+{##}
+{#        {% endfor %}#}
+{#    </table>#}
+
+<div class="si" style="width:35%">
+    <table id="1" class="display">
+        <thead>
+        <tr>
+            <th></th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for CarD in page_data %}
+            <tr>
+                <td> {{ CarD.name }}</td>
+                <td>  {{ sb[loop.index-1] }} km</td>
+            </tr>
+
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+
+    <script>$(document).ready( function () {
+    $('#1').DataTable();
+} );</script>
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fetch/2.0.3/fetch.js"></script>
+    <script type="text/javascript" charset="utf8" src="{{ url_for('static',filename = 'js/datatables.js') }}"></script>
+
+
+
+
+
+
+{% endblock %}
