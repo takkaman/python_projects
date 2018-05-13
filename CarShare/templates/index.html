@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+
+{% block title %}Main{% endblock %}
+
+{% block head %}
+
+
+
+    <link rel="stylesheet" href="{{ url_for('static',filename = 'css/w3.css') }}">
+<link rel="stylesheet" href="{{ url_for('static',filename = 'css/nivoNormalstyle.css') }}">
+<link rel="stylesheet" href="{{ url_for('static',filename = 'css/simple-sidebar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static',filename = 'css/indexcss.css') }}">
+
+    <style>
+
+        .mySlides {
+            width: 1560px;
+            margin-left: -400px;
+            margin-bottom: 20px;
+            display: none;
+            height: 600px;
+        }
+
+        .w3-left, .w3-right, .w3-badge {
+            cursor: pointer
+        }
+
+        .w3-badge {
+            height: 13px;
+            width: 13px;
+            padding: 0
+        }
+    .buttonaa{
+        position: absolute;
+        left:290px;
+        bottom:350px;
+    }
+     .buttonbb{
+        position: absolute;
+        left:410px;
+        bottom:350px;
+    }
+
+
+    </style>
+
+{% endblock %}
+
+{% block main %}
+
+
+
+<div class="haha" style="height: 710px" >
+    <div class="w3-content w3-display-container" style="width: 670px;position:absolute; height: 710px;top:50px;left:400px;">
+
+        <img class="mySlides w3-animate-right" style="height:710px" src="{{ url_for('static',filename = 'images/HPage1.jpg')}}">
+        <img class="mySlides w3-animate-right" style="height: 710px" src="{{ url_for('static',filename = 'images/HPage2.jpg') }}">
+        <img class="mySlides w3-animate-right" style="height: 710px" src="{{ url_for('static',filename = 'images/HPage3.jpg') }}">
+<div class="buttonaa "><a href="{{ url_for('booking') }}" style="width:90px;position: absolute; top:250px;left:-60px;" class="btn btn-danger active" role="button">Booking</a></div>
+<div class="buttonbb" ><a href="{{ url_for('login') }}" style="width:90px; position: absolute;top: 250px;left:-60px;" class="btn btn-primary active" role="button"> Login </a></div>
+
+        <div class="w3-center w3-container w3-section w3-large w3-text-white w3-display-bottommiddle"
+             style="width:100%">
+            <div class="w3-left w3-hover-text-khaki" onclick="plusDivs(-1)">&#10094;</div>
+            <div class="w3-right w3-hover-text-khaki" onclick="plusDivs(1)">&#10095;</div>
+            <span class="w3-badge demo w3-border w3-transparent w3-hover-white" onclick="currentDiv(1)"></span>
+            <span class="w3-badge demo w3-border w3-transparent w3-hover-white" onclick="currentDiv(2)"></span>
+            <span class="w3-badge demo w3-border w3-transparent w3-hover-white" onclick="currentDiv(3)"></span>
+        </div>
+    </div>
+</div>
+
+    <script>
+var myIndex = 0;
+carousel();
+
+function carousel() {
+    var i;
+    var x = document.getElementsByClassName("mySlides");
+    for (i = 0; i < x.length; i++) {
+      x[i].style.display = "none";
+    }
+    myIndex++;
+    if (myIndex > x.length) {myIndex = 1}
+    x[myIndex-1].style.display = "block";
+    setTimeout(carousel, 3500);
+}
+</script>
+
+    <script>
+        var slideIndex = 1;
+        showDivs(slideIndex);
+
+        function plusDivs(n) {
+            showDivs(slideIndex += n);
+        }
+
+        function currentDiv(n) {
+            showDivs(slideIndex = n);
+        }
+
+        function showDivs(n) {
+            var i;
+            var x = document.getElementsByClassName("mySlides");
+            var dots = document.getElementsByClassName("demo");
+            if (n > x.length) {
+                slideIndex = 1
+            }
+            if (n < 1) {
+                slideIndex = x.length
+            }
+            for (i = 0; i < x.length; i++) {
+                x[i].style.display = "none";
+            }
+            for (i = 0; i < dots.length; i++) {
+                dots[i].className = dots[i].className.replace(" w3-white", "");
+            }
+            x[slideIndex - 1].style.display = "block";
+            dots[slideIndex - 1].className += " w3-white";
+        }
+
+    </script>
+{##}
+{#<div class="buttonaa"><a href="{{ url_for('booking') }}" class="btn btn-danger btn-lg active" role="button">Booking</a></div>#}
+{#<div class="buttonbb"><a href="{{ url_for('login') }}" class="btn btn-primary btn-lg active" role="button">Login</a></div>#}
+{##}
+
+
+
+
+
+
+{#  <div><img class="mySlides" src="{{ url_for('static',filename = 'images/HPage1.jpg') }}"></div>#}
+{#        <img class="mySlides" src="{{ url_for('static',filename = 'images/HPage2.jpg') }}">#}
+{#        <img class="mySlides" src="{{ url_for('static',filename = 'images/HPage3.jpg') }}">#}
+
+
+
+
+
+
+{% endblock %}
+

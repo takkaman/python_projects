@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+<html>
+
+{% block title %}
+Car rental
+{% endblock %}
+
+{% block head %}
+     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+<link rel="stylesheet" href="{{ url_for('static',filename = 'css/datatables.css') }}">
+
+{#<link rel="stylesheet" href="{{url_for('static',filename='css/car_rental.css')}}">#}
+
+{% endblock %}
+
+<body>
+{{ name}}<br>{{ brand }}
+{#    <h3 class="page-title">Release car</h3>#}
+{#<form action="" method ="POST">#}
+{#         <div class="form-container">#}
+{#              <div class="form-group">#}
+{#                  <input type="text" class="form-control" placeholder="please enter book type" name="title">#}
+{#              </div>#}
+{#              <div class="form-group">#}
+{#                     <textarea name="content" placeholder="explain" rows ="10" class="form-control"></textarea>#}
+{#              </div>#}
+{#               <div class="form-group">#}
+{#                   <button class="btn btn-primary">submit</button>#}
+{#              </div>#}
+{#        </div>#}
+{#    </form>#}
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Car Name</th>
+                    <th>Booking time</th>
+                    <th>Return time</th>
+                    <th>Creating Time</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for car in Cars %}
+                    <tr>
+                        <td>{{ car.id }}</td>
+                        <td>{{ car.carname }}</td>
+                        <td>{{ car.Bdatetime }}.{{ car.Bday }}.{{ car.Btime }}</td>
+                        <td>{{ car.Rdatetime }}.{{ car.Rday }}.{{ car.Rtime }}</td>
+                        <td>{{ car.create_time }}</td>
+                    </tr>
+
+                {% endfor %}
+                </tbody>
+        </table>
+
+
+        <script>$(document).ready(function () {
+            $('#6').DataTable();
+        });</script>
+
+    <script type="text/javascript" charset="utf8" src="{{ url_for('static',filename = 'images/datatables.js') }}"></script>
+
+
+</body>
+</html>
