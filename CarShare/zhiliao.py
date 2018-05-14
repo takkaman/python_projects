@@ -259,6 +259,9 @@ def booking():
     db.session.commit()
     # catdatas = CarsDataset.query.all()
     tid = request.args.get("tid", 0)
+
+    user_loc = (144.96, -37.801)
+
     if int(tid) != 0:
         if int(tid) == 1:
             page_data = page_data.filter_by(brand='audi')
