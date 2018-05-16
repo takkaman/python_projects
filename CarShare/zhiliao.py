@@ -273,6 +273,7 @@ def booking():
     user_id = session['user_id']
     # print("Leo", user_id)
     page_data = CarsDataset.query
+    avail_cars = CarsDataset.query.filter_by(name='NOEXIST')
     for p in page_data:
         name = p.serializer()['name']
         # db.session.query(CarsDataset).filter(CarsDataset.name==name).update(
@@ -311,6 +312,7 @@ def booking():
         nearest = ""
         for p in page_data:
             name = p.serializer()['name']
+            if Cars.query.filter_by(carname=name).count() > 0: continue
             car_loc = (p.serializer()['lat'], p.serializer()['lng'])
             dist = get_dist(car_loc, user_loc)
             # print(name, dist)
