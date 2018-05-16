@@ -259,9 +259,15 @@ def returncar():
 def rand(a,b):
     return random.random()*(a-b)+b
 
+def get_dist(car_loc, user_loc):
+    x = abs(car_loc[0]-user_loc[0])
+    y = abs(car_loc[1]-user_loc[1])
+    return pow(x,2)+pow(y,2)
+
 @app.route('/booking/', methods=['GET', 'POST'])
 @login_required
 def booking():
+    min_dist = 999999
     username = session['username']
     user_id = session['user_id']
     # print("Leo", user_id)
@@ -274,7 +280,7 @@ def booking():
     # catdatas = CarsDataset.query.all()
     tid = request.args.get("tid", 0)
 
-    user_loc = (144.96, -37.801)
+    user_loc = (-37.801, 144.961)
 
     if int(tid) != 0:
         if int(tid) == 1:
@@ -300,6 +306,17 @@ def booking():
         page_data = page_data.filter_by(gearbox='manual')
     if int(time) == 2:
         page_data = page_data.filter_by(gearbox='automatic')
+    if int(time) == 3:
+        nearest = ""
+        for p in page_data:
+            name = p.serializer()['name']
+            car_loc = (p.serializer()['lat'], p.serializer()['lng'])
+            dist = get_dist(car_loc, user_loc)
+            # print(name, dist)
+            if dist < min_dist:
+                nearest = name
+                min_dist = dist
+        page_data = page_data.filter_by(name=nearest)
 
     pm = request.args.get("pm", 0)
     p = dict(
@@ -369,7 +386,7 @@ def booking():
 
     carmap = Map(
         identifier="carmap",
-        style="height:1024px;width:1024px;margin:0px;",
+        style="height:1024px;width:1024px;margin:0;",
         zoom="15",
         language="en",
 

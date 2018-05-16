@@ -13,9 +13,9 @@
     {% import "_macros.html" as macros %}
     <style>
         .m1 {
-            position: relative;
-            /*top: 70px;*/
-            /*right: 650px;*/
+            position: absolute;
+            top: 70px;
+            left: 20px;
         }
 
         .titl {
@@ -328,6 +328,9 @@
                 value="{{ url_for('booking') }}?tid={{ p['tid'] }}&time=2&pm={{ p['pm'] }}">Automatic
         </button>
 
+            <button onclick="location=this.value" type="button" class="btn btn-success" name="Nearest Car"
+                value="{{ url_for('booking') }}?tid={{ p['tid'] }}&time=3&pm={{ p['pm'] }}">Nearest
+        </button>
     </div>
     <div class="brand3">
         <button onclick="location=this.value" type="button" class="fas fa-check" name="BlueTooth"
