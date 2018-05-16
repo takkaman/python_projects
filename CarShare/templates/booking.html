@@ -12,6 +12,9 @@
     <title>Marker Labels</title>
     {% import "_macros.html" as macros %}
     <style>
+        .pp {
+            margin: 0 0 0px;
+        }
         .m1 {
             position: absolute;
             top: 70px;
@@ -40,7 +43,7 @@
         .brand2 {
             position: absolute;
             top: 160px;
-            right: 160px;
+            right: 120px;
         }
 
         .brand3 {
@@ -54,9 +57,15 @@
             top: 250px;
             right: 210px;
         }
+        .brand5 {
+            position: absolute;
+            top: 300px;
+            right: 0px;
+            width: 700px;
+        }
     .si{
          position: absolute;
-            top: 310px;
+            top: 410px;
             right: 50px;
     }
 
@@ -331,6 +340,9 @@
             <button onclick="location=this.value" type="button" class="btn btn-success" name="Nearest Car"
                 value="{{ url_for('booking') }}?tid={{ p['tid'] }}&time=3&pm={{ p['pm'] }}">Nearest
         </button>
+        <button onclick="location=this.value" type="button" class="btn btn-default" name="Refresh Location"
+                value="{{ url_for('booking') }}?tid=-1&time={{ p['time'] }}&pm={{ p['pm'] }}">Refresh
+        </button>
     </div>
     <div class="brand3">
         <button onclick="location=this.value" type="button" class="fas fa-check" name="BlueTooth"
@@ -353,6 +365,14 @@
 
 
     </div>
+                            <div class="brand5">
+    <p class="pp"><strong>How to Book a Car?</strong></p>
+ <p class="pp">Simply click the Red Icon in the map, you will see the “booking” button and click on it.</p>
+ <p class="pp"><strong> How to Return a Car?</strong></p>
+ <p class="pp">After you used the car, simply click the Blue Icon which is your booked car in the map, you will see the “Return” button and click on it.</p>
+</p>
+</div>
+
 
     {##}
     {#                                    <option name="Automatic Transmission"#}

@@ -271,20 +271,20 @@ def booking():
     min_dist = 999999
     username = session['username']
     user_id = session['user_id']
+    user_loc = (-37.801, 144.961)
     # print("Leo", user_id)
     page_data = CarsDataset.query
+    tid = request.args.get("tid", 0)
+    # print(tid)
     avail_cars = CarsDataset.query.filter_by(name='NOEXIST')
     for p in page_data:
         name = p.serializer()['name']
-        # db.session.query(CarsDataset).filter(CarsDataset.name==name).update(
-        #     {'lat': rand(-37.817000,-37.778999), 'lng': rand(144.95000,144.99399)})
+        if (int(tid) == -1):
+            db.session.query(CarsDataset).filter(CarsDataset.name==name).update({'lat': rand(-37.817000,-37.778999), 'lng': rand(144.95000,144.99399)})
     db.session.commit()
     # catdatas = CarsDataset.query.all()
-    tid = request.args.get("tid", 0)
 
-    user_loc = (-37.801, 144.961)
-
-    if int(tid) != 0:
+    if int(tid) > 0:
         if int(tid) == 1:
             page_data = page_data.filter_by(brand='audi')
 
@@ -371,10 +371,11 @@ def booking():
 #shows location marks on the map
     allmarkers = []
     booked_markers = []
+
     for loc in locations:
         rcd = Cars.query.filter_by(carname=loc['name'])
         if rcd.count() == 0:
-            m = {"lat": loc['lat'], "lng": loc['lng'],
+            m = {"icon":"http://maps.google.com/mapfiles/ms/icons/red-dot.png", "lat": loc['lat'], "lng": loc['lng'],
                 "infobox": boxcontent.format(loc['name'].encode('utf-8'), loc['price'], loc['brand'].encode('utf-8'), loc['seat'],
                 loc['bluetooth'], loc['vehicleType'],loc['kilometer'])}
             allmarkers.append(m)
@@ -382,10 +383,13 @@ def booking():
             if user_id == rcd.first().author_id:
                 # print("Leo", "Found user booked car", loc['name'])
                 # print(return_boxcontent)
-                m = {"lat": loc['lat'], "lng": loc['lng'],
+                m = {"icon":"http://maps.google.com/mapfiles/ms/icons/blue-dot.png", "lat": loc['lat'], "lng": loc['lng'],
                 "infobox": return_boxcontent.format(loc['name'].encode('utf-8'), loc['price'],
                             loc['brand'].encode('utf-8'), loc['seat'], loc['bluetooth'], loc['vehicleType'],loc['kilometer'], "{if(confirm('Are you confirm to return')) {alert('Congratulation，Return Success!');return true; }return false;}")}
                 allmarkers.append(m)
+    user_marker = {"lat": user_loc[0], "lng": user_loc[1], 'icon': 'http://maps.google.com/mapfiles/ms/icons/green-dot.png', "infobox": "<b>You are here</b>"}
+    # print(user_marker)
+    allmarkers.append(user_marker)
 
     carmap = Map(
         identifier="carmap",
@@ -397,7 +401,7 @@ def booking():
         lat =-37.80314407,
         # lng=locations[0]['lng'],
         lng=144.9655776,
-        icon="http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+        icon="http://maps.google.com/mapfiles/ms/icons/red-dot.png",
         name=locations[0]['name'],
         brand=locations[0]['brand'],
         seat=locations[0]['seat'],
