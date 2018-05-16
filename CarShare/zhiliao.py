@@ -244,13 +244,27 @@ def bookingcar():
         return render_template('car.html', name=name, price=price, brand=brand, bluetooth=bluetooth, seat=seat,
                                vehicleType=vehicleType, username=username,kilometer=kilometer)
 
+@app.route('/return/car/', methods=['GET', 'POST'])
+@login_required
+def returncar():
+    if request.method == 'POST':
+        carname = request.form.get('name')
+        car = Cars.query.filter_by(carname=carname).first()
+        db.session.delete(car)
+        db.session.commit()
+        print("Return car", carname)
+
+    return redirect(url_for('booking'))
 
 def rand(a,b):
     return random.random()*(a-b)+b
+
 @app.route('/booking/', methods=['GET', 'POST'])
 @login_required
 def booking():
     username = session['username']
+    user_id = session['user_id']
+    # print("Leo", user_id)
     page_data = CarsDataset.query
     for p in page_data:
         name = p.serializer()['name']
@@ -324,20 +338,38 @@ def booking():
     ""<div>{1}$/Day<input type='hidden' name='price' value='{1}'/><div><input type='hidden' name='brand' value='{2}'/></div> <div><input type='hidden' name='seat' value='{3}'/></div>" \
     "<div><input type='hidden' name='bluetooth' value='{4}'/></div>" \
     "<div><input type='hidden' name='vehicleType' value='{5}'/></div>" \
-                 "<div><input type='hidden' name='kilometer' value='{6}'/></div>" \
-                 "</div><button type='submit'class=btn btn-primary>return</button></form>"
+    "<div><input type='hidden' name='kilometer' value='{6}'/></div>" \
+    "</div><button type='submit'class=btn btn-primary>book</button></form>"
 
-    return_boxcontent = "<form method='post' action='http://127.0.0.1:5000/booking/car/'><div>{0}<input type='hidden' name='name' value='{0}'/></div>"" \
+    return_boxcontent = "<form method='post' action='http://127.0.0.1:5000/return/car/'><div>{0}<input type='hidden' name='name' value='{0}'/></div>"" \
     ""<div>{1}$/Day<input type='hidden' name='price' value='{1}'/><div><input type='hidden' name='brand' value='{2}'/></div> <div><input type='hidden' name='seat' value='{3}'/></div>" \
     "<div><input type='hidden' name='bluetooth' value='{4}'/></div>" \
     "<div><input type='hidden' name='vehicleType' value='{5}'/></div>" \
-                 "<div><input type='hidden' name='kilometer' value='{6}'/></div>" \
-                 "</div><button type='submit'class=btn btn-primary>return</button></form>"
+    "<div><input type='hidden' name='kilometer' value='{6}'/></div>" \
+    "</div><button type='submit' onclick=\"{7}\" class=btn btn-primary>return</button></form>"
 
 #shows location marks on the map
+    allmarkers = []
+    booked_markers = []
+    for loc in locations:
+        rcd = Cars.query.filter_by(carname=loc['name'])
+        if rcd.count() == 0:
+            m = {"lat": loc['lat'], "lng": loc['lng'],
+                "infobox": boxcontent.format(loc['name'].encode('utf-8'), loc['price'], loc['brand'].encode('utf-8'), loc['seat'],
+                loc['bluetooth'], loc['vehicleType'],loc['kilometer'])}
+            allmarkers.append(m)
+        else:
+            if user_id == rcd.first().author_id:
+                # print("Leo", "Found user booked car", loc['name'])
+                # print(return_boxcontent)
+                m = {"lat": loc['lat'], "lng": loc['lng'],
+                "infobox": return_boxcontent.format(loc['name'].encode('utf-8'), loc['price'],
+                            loc['brand'].encode('utf-8'), loc['seat'], loc['bluetooth'], loc['vehicleType'],loc['kilometer'], "{if(confirm('Are you confirm to return')) {alert('Congratulation，Return Success!');return true; }return false;}")}
+                allmarkers.append(m)
+
     carmap = Map(
         identifier="carmap",
-        style="height:700px;width:800px;margin:0;",
+        style="height:1024px;width:1024px;margin:0px;",
         zoom="15",
         language="en",
 
@@ -354,9 +386,7 @@ def booking():
         kilometer=locations[0]['kilometer'],
         price=locations[0]['price'],
 
-        markers=[{"lat": loc['lat'], "lng": loc['lng'],
-                  "infobox": boxcontent.format(loc['name'].encode('utf-8'), loc['price'], loc['brand'].encode('utf-8'), loc['seat'],
-                                               loc['bluetooth'], loc['vehicleType'],loc['kilometer'])} for loc in locations]
+        markers=allmarkers
     )
 
     # markers = [{"lat": loc['lat'], "lng": loc['lng'],
