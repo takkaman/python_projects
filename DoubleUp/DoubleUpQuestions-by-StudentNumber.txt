@@ -1,0 +1,20 @@
+Is the earth flat?
+n
+Is 2018 leap year?
+n
+Is Chinain Asia?
+y
+Is Earth bigger than Moon?
+y
+Is Obama current America President?
+n
+2 + 2 = 3?
+n
+There are 30 days in Feburday?
+n
+2 * 3 = 6?
+y
+Python3 is latest Python release?
+y
+Is Japan in Europe?
+n

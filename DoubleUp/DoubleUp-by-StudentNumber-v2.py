@@ -27,10 +27,11 @@ else:
     money = 1
     print "Incorrect answer, your money has been reset to $1."
 
-print "You answered "+str(corr_num) + " questions incorrectly."
+# print end message
+print "GAME OVER!"
+print "Thank you for playing Double Up, ", username
+print "You have won $"+str(money)
+print "You answered "+str(corr_num) + " questions correctly."
 print "You answered "+str(incorr_num) + " questions incorrectly."
 print "You skipped "+str(skip_num) + " questions."
-# print end message
-# print "GAME OVER"
-# print "Thank you for playing Double Up, ", username
-# print "You have won $"+str(money)
+

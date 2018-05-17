@@ -18,6 +18,6 @@ else:
     money = 1
 
 # print end message
-print "GAME OVER"
+print "GAME OVER!"
 print "Thank you for playing Double Up, ", username
 print "You have won $"+str(money)
