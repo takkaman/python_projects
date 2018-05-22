@@ -23,6 +23,8 @@ short_stream_count = 0
 long_pcaps = []
 short_pcaps = []
 pcaps_len = 0
+short_index = 1
+long_index = 1
 
 i = -1
 with open('pcap_read_result.txt', 'w') as fp:
@@ -86,20 +88,33 @@ with open('pcap_read_result.txt', 'w') as fp:
                             if time > sync_time:
                                 sync_time = time
                     if sync_time == -1: continue
-                    delta = packet.time-sync_time
-                    print("FIN {0} {1} {2}".format(ip_tuple, port_tuple, delta))
-                    fp.write("FIN {0} {1} {2}\n".format(ip_tuple, port_tuple, delta))
+                    delta = float(packet.time)-sync_time
+                    # print(packet.time)
+                    # print(sync_time)
+                    # print("pkt time: %.6f" % packet.time)
+                    # print("sync time: %.6f" % sync_time)
+
+                    print("FIN %s %s %.6f" % (ip_tuple, port_tuple, delta))
+                    fp.write("FIN %s %s %.6f\n" % (ip_tuple, port_tuple, delta))
+                    # print("a")
                     if delta > 10000:
                         long_stream_count += 1
                         long_stream += delta
                         for pkg in pkt[ip_tuple][port_tuple]['PKG']:
                             long_pcaps.append(pkg)
                         for pkg in pkt[ip_tuple1][port_tuple1]['PKG']:
-                            short_pcaps.append(pkg)
+                            long_pcaps.append(pkg)
                         long_pcaps.append(packet)
+                        del(pkt[ip_tuple1])
+                        del(pkt[ip_tuple])
+                        if len(long_pcaps) >= 10000:
+                            wrpcap("long_stream_"+str(long_index)+".pcap", long_pcaps)
+                            long_index += 1
+                            long_pcaps = []
                         print("Found {0} long stream now.".format(long_stream_count))
                         fp.write("Found {0} long stream now.\n".format(long_stream_count))
                     else:
+                        # print("b")
                         short_stream_count += 1
                         short_stream += delta
                         for pkg in pkt[ip_tuple][port_tuple]['PKG']:
@@ -107,23 +122,36 @@ with open('pcap_read_result.txt', 'w') as fp:
                         for pkg in pkt[ip_tuple1][port_tuple1]['PKG']:
                             short_pcaps.append(pkg)
                         short_pcaps.append(packet)
-                        print("Found {0} short stream now.".format(short_stream_count))
-                        fp.write("Found {0} short stream now.\n".format(short_stream_count))
-                    pkt[ip_tuple][port_tuple] = defaultdict(list)
-                    pkt[ip_tuple1][port_tuple1] = defaultdict(list)
+                        del(pkt[ip_tuple][port_tuple])
+                        del(pkt[ip_tuple1][port_tuple1])
+                        del(pkt[ip_tuple1])
+                        del(pkt[ip_tuple])
+                        # print(len(short_pcaps))
+                        if len(short_pcaps) >= 10000:
+                            wrpcap("short_stream_"+str(short_index)+".pcap", short_pcaps)
+                            short_index += 1
+                            short_pcaps = []
+                        # print("1")
+                        print("Found {0} short stream with total length now.".format(short_stream_count))
+                        # print("2")
+                        fp.write("Found {0} short stream with total length now.\n".format(short_stream_count))
+                    # pkt[ip_tuple][port_tuple] = defaultdict(list)
+                    # pkt[ip_tuple1][port_tuple1] = defaultdict(list)
+                    # print("3")
                     # print(pkt[ip_tuple][port_tuple], pkt[ip_tuple1][port_tuple1])
                     # pkt[ip_tuple][port_tuple].append(("FIN", packet.time))
                 else:
                     if f & SYN:
-                        # print("SYN", ip_tuple, port_tuple)
-                        pkt[ip_tuple][port_tuple]['SYN'].append(packet.time)
+                        # print("SYN {0} {1}".format(ip_tuple, port_tuple))
+                        # fp.write("SYN {0} {1}\n".format(ip_tuple, port_tuple))
+                        pkt[ip_tuple][port_tuple]['SYN'].append(float(packet.time))
                     # print(ip_tuple, port_tuple)
                     # print("before", pkt[ip_tuple])
                     pkt[ip_tuple][port_tuple]['PKG'].append(packet)
                     # print("after", pkt[ip_tuple])
             except Exception as e:
-                pass
-                # print(e)
+                # pass
+                print(e)
         print("Processing file "+file_name+" finished!")
         fp.write("Processing file "+file_name+" finished!\n")
 
@@ -136,7 +164,7 @@ print("Total {0} short stream sessions".format(short_stream_count))
 print("Total {0} short stream length".format(short_stream))
 
 if long_stream_count > 0:
-    wrpcap("long_stream.pcap", long_pcaps)
+    wrpcap("long_stream_last.pcap", long_pcaps)
 if short_stream_count > 0:
-    wrpcap("short_stream.pcap", short_pcaps)
+    wrpcap("short_stream_last.pcap", short_pcaps)
 # print(syn, fin)
