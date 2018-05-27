@@ -45,6 +45,12 @@ flask_admin = Admin()
 flask_admin.init_app(app)
 EARTH_REDIUS = 6378.137
 
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object(config)
+    db.init_app(app)
+
+    return app
 
 @app.route('/')
 @login_required

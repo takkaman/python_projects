@@ -9,7 +9,7 @@ class Testzhiliao(unittest.TestCase):
     def tearDown(self):
         pass
     def testLogin(self):
-        self.assertEqual("kelly", username = ('username'))
+        self.assertEqual("leo", username = ('leo'), password = ('leo'))
         self.assertFalse('000', password = ('password'))
 
 
