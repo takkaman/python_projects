@@ -6,8 +6,7 @@ class Tile:
 		Initialises the terrain tile and attributes
 		"""
 		pass
-	
-	
+
 	def elevation(self):
 		"""
 		Returns an integer value of the elevation number 
