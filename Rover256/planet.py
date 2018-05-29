@@ -67,7 +67,64 @@ class Planet:
 		# print("Attempt move the rover {0} by {1} tiles".format(direct, cycles))
 		if direct == "N":
 			for i in range(1, cycles + 1):
-				new_row = self.cycle(rov.x - i, self.height)
+				new_row = self.cycle(rov.x - 1, self.height)
+				current_tile = self.tiles[rov.x][rov.y]
+				new_tile = self.tiles[new_row][rov.y]
+				print("current: {0} {1}, access: {2} {3}".format(rov.x, rov.y, new_row, rov.y))
+				result, new_elv = self.accessable(current_tile, new_tile)
+				if result:
+					current_tile.set_occupant(None)
+					new_tile.set_occupant(rov)
+					rov.x = new_row
+					rov.elv = new_elv
+					if new_tile.is_shaded():
+						rov.battery -= 1
+						if rov.battery == 0:
+							return rov
+				else:
+					return rov
+			return rov
+		if direct == "W":
+			for i in range(1, cycles + 1):
+				new_col = self.cycle(rov.y - 1, self.width)
+				current_tile = self.tiles[rov.x][rov.y]
+				new_tile = self.tiles[rov.x][new_col]
+				print("current: {0} {1}, access: {2} {3}".format(rov.x, rov.y, rov.x, new_col))
+				result, new_elv = self.accessable(current_tile, new_tile)
+				if result:
+					current_tile.set_occupant(None)
+					new_tile.set_occupant(rov)
+					rov.y = new_col
+					rov.elv = new_elv
+					if new_tile.is_shaded():
+						rov.battery -= 1
+						if rov.battery == 0:
+							return rov
+				else:
+					return rov
+			return rov
+		if direct == "E":
+			for i in range(1, cycles + 1):
+				new_col = self.cycle(rov.y + 1, self.width)
+				current_tile = self.tiles[rov.x][rov.y]
+				new_tile = self.tiles[rov.x][new_col]
+				print("current: {0} {1}, access: {2} {3}".format(rov.x, rov.y, rov.x, new_col))
+				result, new_elv = self.accessable(current_tile, new_tile)
+				if result:
+					current_tile.set_occupant(None)
+					new_tile.set_occupant(rov)
+					rov.y = new_col
+					rov.elv = new_elv
+					if new_tile.is_shaded():
+						rov.battery -= 1
+						if rov.battery == 0:
+							return rov
+				else:
+					return rov
+			return rov
+		if direct == "W":
+			for i in range(1, cycles + 1):
+				new_row = self.cycle(rov.x - 1, self.height)
 				current_tile = self.tiles[rov.x][rov.y]
 				new_tile = self.tiles[new_row][rov.y]
 				print("current: {0} {1}, access: {2} {3}".format(rov.x, rov.y, new_row, rov.y))
