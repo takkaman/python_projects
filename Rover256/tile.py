@@ -8,7 +8,7 @@ class Tile:
 		self.type = type
 		self.elv = []
 		for arg in args:
-			self.elv.append(arg)
+			self.elv.append(int(arg))
 		self.occupant = None
 		self.explored = False
 

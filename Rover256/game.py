@@ -5,6 +5,7 @@ import traceback
 # import rover
 # import tile
 
+
 def quit():
 	"""
 	Will quit the program
@@ -37,7 +38,7 @@ def menu_start_game(filepath):
 		else:
 			# print(pt.tiles[1][2].type)
 			# print(rov.elv)
-			while(True):
+			while True:
 				action = input("Please select the action for rover: SCAN, MOVE, STATS, WAIT, FINISH:\n")
 				if action == "FINISH":
 					print("You explored {0} % of {1}".format(pt.ratio, pt.name))
@@ -54,9 +55,11 @@ def menu_start_game(filepath):
 						if mode == "shade":
 							pt.scan_shade(rov.x, rov.y)
 						elif mode == "elevation":
-							pt.scan_elevation(rov.x, rov.y)
+							pt.scan_elevation(rov.x, rov.y, rov.elv)
+						else:
+							print("Cannot perform this command")
 					except:
-						pass
+						traceback.print_exc()
 				if "WAIT" in action:
 					try:
 						cycles = action.strip().split(" ")[1]
@@ -65,6 +68,7 @@ def menu_start_game(filepath):
 					except:
 						traceback.print_exc()
 						pass
+
 
 def menu():
 	"""
