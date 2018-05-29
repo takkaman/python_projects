@@ -1,11 +1,14 @@
 
 class Rover:
 	
-	def __init__(self, ):
+	def __init__(self, x, y, elv):
 		"""
 		Initialises the rover
 		"""
-		pass
+		self.x = x
+		self.y = y
+		self.elv = elv
+		self.battery = 10
 	
 	def move(self, direction, cycles):
 		"""
@@ -17,5 +20,6 @@ class Rover:
 		"""
 		The rover will wait for the specified cycles
 		"""
-		pass
-	
+		self.battery += int(cycles)
+		if self.battery >= 100:
+			self.battery = 100

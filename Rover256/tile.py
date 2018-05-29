@@ -1,36 +1,42 @@
 
 class Tile:
-		
-	def __init__(self, ):
+
+	def __init__(self, type, *args):
 		"""
 		Initialises the terrain tile and attributes
 		"""
-		pass
+		self.type = type
+		self.elv = []
+		for arg in args:
+			self.elv.append(arg)
+		self.occupant = None
+		self.explored = False
 
 	def elevation(self):
 		"""
 		Returns an integer value of the elevation number 
 		of the terrain object
 		"""
-		pass
+		return self.elv
 	
 	def is_shaded(self):
 		"""
 		Returns True if the terrain tile is shaded, otherwise False
 		"""
-		pass
+		if self.type == "shaded":
+			return True
+		return False
 	
 	def set_occupant(self, obj):
 		"""
 		Sets the occupant on the terrain tile
 		"""
-		pass
+		self.occupant = obj
 	
 	def get_occupant(self):
 		"""
 		Gets the entity on the terrain tile
 		If nothing is on this tile, it should return None
 		"""
-		pass
-	
-	
+		return self.occupant
+

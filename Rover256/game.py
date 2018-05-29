@@ -1,8 +1,15 @@
+import os
+from loader import *
+import traceback
+# import planet
+# import rover
+# import tile
+
 def quit():
 	"""
 	Will quit the program
 	"""
-	pass
+	exit()
 
 
 def menu_help():
@@ -19,8 +26,36 @@ def menu_start_game(filepath):
 	"""
 	Will start the game with the given file path
 	"""
-	pass
-
+	if not os.path.exists(filepath):
+		print("Level file could not be found")
+	else:
+		result, pt, rov = load_level(filepath)
+		if not result:
+			print("Unable to load level file")
+		else:
+			# print(pt.tiles[1][2].type)
+			# print(rov.elv)
+			while(True):
+				action = input("Please select the action for rover: SCAN, MOVE, STATS, WAIT, FINISH:\n")
+				if action == "FINISH":
+					print("You explored {0} % of {1}".format(pt.ratio, pt.name))
+					break
+				if action == "STATS":
+					print("Explored: {0}%".format(pt.ratio))
+					print("Battery: {0}/100".format(rov.battery))
+					continue
+				if action == "MOVE":
+					pass
+				if action == "SCAN":
+					pass
+				if "WAIT" in action:
+					try:
+						cycles = action.strip().split(" ")[1]
+						if not pt.tiles[rov.x][rov.y].is_shaded():
+							rov.wait(cycles)
+					except:
+						traceback.print_exc()
+						pass
 
 def menu():
 	"""
@@ -28,9 +63,13 @@ def menu():
 	"""
 	select = input("Please select the item: QUIT, START, HELP:\n")
 	if "START" in select:
-		filepath = select.split(' ')[1]
-		# print(filepath)
-		menu_start_game(filepath)
+		try:
+			filepath = select.split(' ')[1]
+			# print(filepath)
+			menu_start_game(filepath)
+		except:
+			traceback.print_exc()
+			print("Unable to load level file")
 	elif select == "HELP":
 		menu_help()
 	elif select == "QUIT":
