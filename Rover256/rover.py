@@ -8,7 +8,7 @@ class Rover:
 		self.x = x
 		self.y = y
 		self.elv = elv
-		self.battery = 10
+		self.battery = 100
 	
 	def move(self, direction, cycles):
 		"""

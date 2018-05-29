@@ -39,10 +39,10 @@ def menu_start_game(filepath):
 			while True:
 				action = input("Please select the action for rover: SCAN, MOVE, STATS, WAIT, FINISH:\n")
 				if action == "FINISH":
-					print("You explored {0} % of {1}".format(pt.ratio, pt.name))
+					print("You explored {0:.2f} % of {1}".format(float(pt.ratio * 100 / (pt.width * pt.height)), pt.name))
 					break
 				if action == "STATS":
-					print("Explored: {0}%".format(pt.ratio))
+					print("Explored: {0:.2f}%".format(float(pt.ratio * 100 / (pt.width * pt.height))))
 					print("Battery: {0}/100".format(rov.battery))
 					continue
 				if "MOVE" in action:
@@ -87,6 +87,7 @@ def menu():
 			filepath = select.split(' ')[1]
 			# print(filepath)
 			menu_start_game(filepath)
+			return
 		except:
 			traceback.print_exc()
 			print("Unable to load level file")

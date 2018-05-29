@@ -12,8 +12,8 @@ class Planet:
 		self.tiles = [[Tile("plain") for i in range(width)] for i in range(height)]
 		self.ratio = 0
 
-	def update_ratio(self):
-		self.ratio += 1
+	# def update_ratio(self):
+	# 	self.ratio += 1
 
 	def scan_shade(self, x, y):
 		# shades = [[0 for i in range(5)] for i in range(5)]
@@ -45,22 +45,36 @@ class Planet:
 					line += "H|"
 				else:
 					# print(len(self.tiles[row][col].elevation()))
-					if len(self.tiles[row][col].elevation()) == 2:
-						if elv == int(self.tiles[row][col].elevation()[0]):  # elevation equals to highest slop
+					if len(self.tiles[row][col].elevation()) == 2 and len(elv) == 1:  # current plain vs slop
+						if elv[0] == self.tiles[row][col].elevation()[0]:  # elevation equals to highest slop
 							line += "\|"
-						elif elv == int(self.tiles[row][col].elevation()[1]):  # elevation equals to lowest slop
+						elif elv[0] == self.tiles[row][col].elevation()[1]:  # elevation equals to lowest slop
 							line += "/|"
-						elif elv < int(self.tiles[row][col].elevation()[1]):  # elevation lower than lowest slop
+						elif elv[0] < self.tiles[row][col].elevation()[1]:  # elevation lower than lowest slop
 							line += "+|"
 						else:
 							line += "-|"
-					else:
-						if elv == int(self.tiles[row][col].elevation()[0]):  # plain same elevation
+					elif len(self.tiles[row][col].elevation()) == 1 and len(elv) == 1:  # current plain vs plain
+						if elv[0] == self.tiles[row][col].elevation()[0]:
 							line += " |"
-						elif elv > int(self.tiles[row][col].elevation()[0]):  # plain lower elevation
+						elif elv[0] > self.tiles[row][col].elevation()[0]:
 							line += "-|"
 						else:
 							line += "+|"
+					elif len(self.tiles[row][col].elevation()) == 1 and len(elv) == 2:  # current slop vs plain
+						if elv[1] > self.tiles[row][col].elevation()[0]:
+							line += "-|"
+						elif elv[0] < self.tiles[row][col].elevation()[0]:
+							line += "+|"
+						else:
+							line += " |"
+					elif len(self.tiles[row][col].elevation()) == 2 and len(elv) == 2:  # current slop vs slop
+						if elv[1] > self.tiles[row][col].elevation()[0]:
+							line += "-|"
+						elif elv[0] < self.tiles[row][col].elevation()[1]:  # plain lower elevation
+							line += "+|"
+						else:
+							line += " |"
 			print(line)
 
 	def explore(self, direct, cycles, rov):
@@ -76,7 +90,11 @@ class Planet:
 					current_tile.set_occupant(None)
 					new_tile.set_occupant(rov)
 					rov.x = new_row
-					rov.elv = new_elv
+					rov.elv = new_tile.elv
+					if not new_tile.explored:
+						new_tile.explored = True
+						self.ratio += 1
+
 					if new_tile.is_shaded():
 						rov.battery -= 1
 						if rov.battery == 0:
@@ -84,18 +102,22 @@ class Planet:
 				else:
 					return rov
 			return rov
-		if direct == "W":
+		if direct == "S":
 			for i in range(1, cycles + 1):
-				new_col = self.cycle(rov.y - 1, self.width)
+				new_row = self.cycle(rov.x + 1, self.height)
 				current_tile = self.tiles[rov.x][rov.y]
-				new_tile = self.tiles[rov.x][new_col]
-				print("current: {0} {1}, access: {2} {3}".format(rov.x, rov.y, rov.x, new_col))
+				new_tile = self.tiles[new_row][rov.y]
+				print("current: {0} {1}, access: {2} {3}".format(rov.x, rov.y, new_row, rov.y))
 				result, new_elv = self.accessable(current_tile, new_tile)
 				if result:
 					current_tile.set_occupant(None)
 					new_tile.set_occupant(rov)
-					rov.y = new_col
-					rov.elv = new_elv
+					rov.x = new_row
+					rov.elv = new_tile.elv
+					if not new_tile.explored:
+						new_tile.explored = True
+						self.ratio += 1
+
 					if new_tile.is_shaded():
 						rov.battery -= 1
 						if rov.battery == 0:
@@ -114,7 +136,11 @@ class Planet:
 					current_tile.set_occupant(None)
 					new_tile.set_occupant(rov)
 					rov.y = new_col
-					rov.elv = new_elv
+					rov.elv = new_tile.elv
+					if not new_tile.explored:
+						new_tile.explored = True
+						self.ratio += 1
+
 					if new_tile.is_shaded():
 						rov.battery -= 1
 						if rov.battery == 0:
@@ -124,16 +150,20 @@ class Planet:
 			return rov
 		if direct == "W":
 			for i in range(1, cycles + 1):
-				new_row = self.cycle(rov.x - 1, self.height)
+				new_col = self.cycle(rov.y - 1, self.width)
 				current_tile = self.tiles[rov.x][rov.y]
-				new_tile = self.tiles[new_row][rov.y]
-				print("current: {0} {1}, access: {2} {3}".format(rov.x, rov.y, new_row, rov.y))
+				new_tile = self.tiles[rov.x][new_col]
+				print("current: {0} {1}, access: {2} {3}".format(rov.x, rov.y, rov.x, new_col))
 				result, new_elv = self.accessable(current_tile, new_tile)
 				if result:
 					current_tile.set_occupant(None)
 					new_tile.set_occupant(rov)
-					rov.x = new_row
-					rov.elv = new_elv
+					rov.y = new_col
+					rov.elv = new_tile.elv
+					if not new_tile.explored:
+						new_tile.explored = True
+						self.ratio += 1
+
 					if new_tile.is_shaded():
 						rov.battery -= 1
 						if rov.battery == 0:

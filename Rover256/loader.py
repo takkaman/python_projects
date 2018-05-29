@@ -49,7 +49,9 @@ def load_level(filename):
 				# print(lines[i].strip().split(","))
 				pt.tiles[row][col].type = lines[i].strip().split(",")[0]
 				pt.tiles[row][col].elv = [int(e) for e in lines[i].strip().split(",")[1:]]
-			rov = Rover(rov_x, rov_y, int(pt.tiles[rov_x][rov_y].elv[0]))
+			rov = Rover(rov_x, rov_y, pt.tiles[rov_x][rov_y].elv)
+			pt.tiles[rov_x][rov_y].explored = True
+			pt.ratio += 1
 
 		except Exception as e:
 			traceback.print_exc()
