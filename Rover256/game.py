@@ -30,6 +30,8 @@ def menu_start_game(filepath):
 		print("Level file could not be found")
 	else:
 		result, pt, rov = load_level(filepath)
+		rov.x = 0
+		rov.y = 4
 		if not result:
 			print("Unable to load level file")
 		else:
@@ -46,8 +48,15 @@ def menu_start_game(filepath):
 					continue
 				if action == "MOVE":
 					pass
-				if action == "SCAN":
-					pass
+				if "SCAN" in action:
+					try:
+						mode = action.strip().split(" ")[1]
+						if mode == "shade":
+							pt.scan_shade(rov.x, rov.y)
+						elif mode == "elevation":
+							pt.scan_elevation(rov.x, rov.y)
+					except:
+						pass
 				if "WAIT" in action:
 					try:
 						cycles = action.strip().split(" ")[1]
