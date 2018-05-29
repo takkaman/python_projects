@@ -31,8 +31,6 @@ def menu_start_game(filepath):
 		print("Level file could not be found")
 	else:
 		result, pt, rov = load_level(filepath)
-		rov.x = 0
-		rov.y = 4
 		if not result:
 			print("Unable to load level file")
 		else:
@@ -47,8 +45,17 @@ def menu_start_game(filepath):
 					print("Explored: {0}%".format(pt.ratio))
 					print("Battery: {0}/100".format(rov.battery))
 					continue
-				if action == "MOVE":
-					pass
+				if "MOVE" in action:
+					try:
+						direct = action.strip().split(" ")[1]
+						cycles = int(action.strip().split(" ")[2])
+						if not direct == "N" and not direct == "E" and not direct == "S" and not direct == "W": continue
+						if cycles <= 0: continue
+						rov = pt.explore(direct, cycles, rov)
+						print("New pos: {0} {1}, elevation: {2}, battery: {3}".format(rov.x, rov.y, rov.elv, rov.battery))
+					except:
+						traceback.print_exc()
+						pass
 				if "SCAN" in action:
 					try:
 						mode = action.strip().split(" ")[1]

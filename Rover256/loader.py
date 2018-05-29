@@ -42,13 +42,14 @@ def load_level(filename):
 			if width < rov_x or height < rov_y or rov_x < 0 or rov_y < 0: return False, None, None
 
 			pt = Planet(planet_name, width, height)
-			rov = Rover(rov_x, rov_y, 0)
+
 			for i in range(7, 37):
 				row = int((i - 7) / width)
 				col = int((i - 7) % width)
 				# print(lines[i].strip().split(","))
 				pt.tiles[row][col].type = lines[i].strip().split(",")[0]
-				pt.tiles[row][col].elv = lines[i].strip().split(",")[1:]
+				pt.tiles[row][col].elv = [int(e) for e in lines[i].strip().split(",")[1:]]
+			rov = Rover(rov_x, rov_y, int(pt.tiles[rov_x][rov_y].elv[0]))
 
 		except Exception as e:
 			traceback.print_exc()

@@ -20,18 +20,8 @@ class Planet:
 		for i in range(-2, 3):
 			line = "|"
 			for j in range(-2, 3):
-				row = x + i
-				if row < 0:
-					row += self.height
-				elif row >= self.height:
-					row -= self.height
-
-				col = y + j
-				if col < 0:
-					col += self.width
-				elif col >= self.width:
-					col -= self.width
-				# print(row, col)
+				row = self.cycle(x + i, self.height)
+				col = self.cycle(y + j, self.width)
 
 				if i == 0 and j == 0:
 					line += "H|"
@@ -44,22 +34,12 @@ class Planet:
 	def scan_elevation(self, x, y, rov_elv):
 		# shades = [[0 for i in range(5)] for i in range(5)]
 		elv = rov_elv
-		# print(elv)
+		print(elv)
 		for i in range(-2, 3):
 			line = "|"
 			for j in range(-2, 3):
-				row = x + i
-				if row < 0:
-					row += self.height
-				elif row >= self.height:
-					row -= self.height
-
-				col = y + j
-				if col < 0:
-					col += self.width
-				elif col >= self.width:
-					col -= self.width
-				# print(row, col)
+				row = self.cycle(x + i, self.height)
+				col = self.cycle(y + j, self.width)
 
 				if i == 0 and j == 0:
 					line += "H|"
@@ -82,4 +62,60 @@ class Planet:
 						else:
 							line += "+|"
 			print(line)
+
+	def explore(self, direct, cycles, rov):
+		# print("Attempt move the rover {0} by {1} tiles".format(direct, cycles))
+		if direct == "N":
+			for i in range(1, cycles + 1):
+				new_row = self.cycle(rov.x - i, self.height)
+				current_tile = self.tiles[rov.x][rov.y]
+				new_tile = self.tiles[new_row][rov.y]
+				print("current: {0} {1}, access: {2} {3}".format(rov.x, rov.y, new_row, rov.y))
+				result, new_elv = self.accessable(current_tile, new_tile)
+				if result:
+					current_tile.set_occupant(None)
+					new_tile.set_occupant(rov)
+					rov.x = new_row
+					rov.elv = new_elv
+					if new_tile.is_shaded():
+						rov.battery -= 1
+						if rov.battery == 0:
+							return rov
+				else:
+					return rov
+			return rov
+
+	def accessable(self, current_tile, new_tile):
+		curr_elv = current_tile.elevation()
+		new_elv = new_tile.elevation()
+		if len(curr_elv) == 1 and len(new_elv) == 1:
+			if curr_elv[0] == new_elv[0]:
+				return True, new_elv[0]
+			else:
+				return False, None
+		elif len(curr_elv) == 2 and len(new_elv) == 1:
+			if curr_elv[0] == new_elv[0] or curr_elv[1] == new_elv[0]:
+				return True, new_elv[0]
+			else:
+				return False, None
+		elif len(curr_elv) == 1 and len(new_elv) == 2:
+			if curr_elv[0] == new_elv[0]:  # down slop
+				return True, new_elv[1]
+			elif curr_elv[0] == new_elv[1]:  # up slop
+				return True, new_elv[0]
+			else:
+				return False, None
+		else:
+			return False, None  # assume no consecutive slops
+
+	def cycle(self, val, bound):
+		if val >= bound:
+			return val - bound
+		elif val < 0:
+			return val + bound
+		else:
+			return val
+
+
+
 
