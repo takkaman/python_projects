@@ -107,7 +107,8 @@ def log_in(event):
 
 # ---------- Button Handlers for Account Screen ----------
 
-def save_and_log_out(event):
+
+def save_and_log_out():
     '''Function  to overwrite the account file with the current state of
        the account object (i.e. including any new transactions), remove
        all widgets and display the login screen.'''
@@ -121,9 +122,9 @@ def save_and_log_out(event):
 
     # Remove all widgets and display the login screen again
     remove_all_widgets()
-    clear_pin_entry(event)
+    account_pin_entry.delete(0, 'end')
     create_login_screen()
-    # clear_pin_entry()
+
 
 def perform_deposit():
     '''Function to add a deposit for the amount in the amount entry to the
@@ -298,6 +299,7 @@ def create_account_screen():
     global amount_label
     global transaction_text_widget
     global balance_var
+    global account
 
     remove_all_widgets()
     # ----- Row 0 -----
@@ -308,25 +310,28 @@ def create_account_screen():
     # ----- Row 1 -----
 
     # Account number label here
-    account_lb = tk.Label(win, text="Account Number: ")
+    account_lb = tk.Label(win, text="Account Number: $"+account.account_number)
     account_lb.grid(row=1, column=0, sticky='nsew')
     # Balance label here
-    balance_lb = tk.Label(win, text="Balance: ")
+    balance_lb = tk.Label(win, text="Balance: "+account.balance)
     balance_lb.grid(row=1, column=1, sticky='nsew')
     # Log out button here
-    logout = tk.Button(win, text="Log Out")
-    logout.grid(row=1, column=2, sticky='nsew')
-    logout.bind('<Button-1>', save_and_log_out)
+    logout = tk.Button(win, text="Log Out", command=save_and_log_out)
+    logout.grid(row=1, column=2, columnspan=2, sticky='nsew')
+    # logout.bind('<Button-1>', save_and_log_out)
     # ----- Row 2 -----
 
     # Amount label here
-
+    amount_lb = tk.Label(win, text="Amount ($)")
+    amount_lb.grid(row=2, column=0, sticky='nsew')
     # Amount entry here
-
+    amount_entry.grid(row=2, column=1, sticky='nsew')
     # Deposit button here
-
+    button_dep = tk.Button(win, text='Deposit', command=perform_deposit)
+    button_dep.grid(row=2, column=2, sticky='nsew')
     # Withdraw button here
-
+    button_wtd = tk.Button(win, text='Withdraw', command=perform_withdrawal)
+    button_wtd.grid(row=2, column=3, sticky='nsew')
     # NOTE: Bind Deposit and Withdraw buttons via the command attribute to the relevant deposit and withdraw
     #       functions in this file. If we "BIND" these buttons then the button being pressed keeps looking as
     #       if it is still pressed if an exception is raised during the deposit or withdraw operation, which is
@@ -338,6 +343,7 @@ def create_account_screen():
     # Declare scrollbar (text_scrollbar) here (BEFORE transaction text widget)
     
     # Add transaction Text widget and configure to be in 'disabled' mode so it cannot be edited.
+    transaction_text_widget
     # Note: Set the yscrollcommand to be 'text_scrollbar.set' here so that it actually scrolls the Text widget
     # Note: When updating the transaction text widget it must be set back to 'normal mode' (i.e. state='normal') for it to be edited
 
