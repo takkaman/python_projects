@@ -196,7 +196,8 @@ def plot_interest_graph():
     '''Function to plot the cumulative interest for the next 12 months here.'''
 
     # YOUR CODE to generate the x and y lists here which will be plotted
-    
+    x = 1
+    y = 2
     # This code to add the plots to the window is a little bit fiddly so you are provided with it.
     # Just make sure you generate a list called 'x' and a list called 'y' and the graph will be plotted correctly.
     figure = Figure(figsize=(5,2), dpi=100)
@@ -317,7 +318,7 @@ def create_account_screen():
     balance_lb.grid(row=1, column=1, sticky='nsew')
     # Log out button here
     logout = tk.Button(win, text="Log Out", command=save_and_log_out)
-    logout.grid(row=1, column=2, columnspan=2, sticky='nsew')
+    logout.grid(row=1, column=2, columnspan=3, sticky='nsew')
     # logout.bind('<Button-1>', save_and_log_out)
     # ----- Row 2 -----
 
@@ -331,7 +332,7 @@ def create_account_screen():
     button_dep.grid(row=2, column=2, sticky='nsew')
     # Withdraw button here
     button_wtd = tk.Button(win, text='Withdraw', command=perform_withdrawal)
-    button_wtd.grid(row=2, column=3, sticky='nsew')
+    button_wtd.grid(row=2, column=3, columnspan=2, sticky='nsew')
     # NOTE: Bind Deposit and Withdraw buttons via the command attribute to the relevant deposit and withdraw
     #       functions in this file. If we "BIND" these buttons then the button being pressed keeps looking as
     #       if it is still pressed if an exception is raised during the deposit or withdraw operation, which is
@@ -341,19 +342,21 @@ def create_account_screen():
     # ----- Row 3 -----
 
     # Declare scrollbar (text_scrollbar) here (BEFORE transaction text widget)
-    
+    text_scrollbar = tk.Scrollbar(win)
     # Add transaction Text widget and configure to be in 'disabled' mode so it cannot be edited.
-    transaction_text_widget
+    transaction_text_widget.configure(state='disabled', yscrollcommand=text_scrollbar.set)
+    transaction_text_widget.grid(row=3, column=0, columnspan=4, sticky='nsew')
     # Note: Set the yscrollcommand to be 'text_scrollbar.set' here so that it actually scrolls the Text widget
     # Note: When updating the transaction text widget it must be set back to 'normal mode' (i.e. state='normal') for it to be edited
 
     # Now add the scrollbar and set it to change with the yview of the text widget
 
+    text_scrollbar.grid(row=3, column=4, sticky='nsew')
 
     # ----- Row 4 - Graph -----
 
     # Call plot_interest_graph() here to display the graph
-    
+    plot_interest_graph()
 
     # ----- Set column & row weights -----
 
