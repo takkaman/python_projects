@@ -89,11 +89,11 @@ def log_in(event):
         #  ...also clear PIN entry and change focus to account number entry
 
     # Got here without raising an exception? Then we can log in - so remove the widgets and display the account screen
-    
+    create_account_screen()
 
 # ---------- Button Handlers for Account Screen ----------
 
-def save_and_log_out():
+def save_and_log_out(event):
     '''Function  to overwrite the account file with the current state of
        the account object (i.e. including any new transactions), remove
        all widgets and display the login screen.'''
@@ -106,7 +106,8 @@ def save_and_log_out():
     # Reset the account number and pin to blank
 
     # Remove all widgets and display the login screen again
-    
+    remove_all_widgets()
+    create_login_screen()
 
 def perform_deposit():
     '''Function to add a deposit for the amount in the amount entry to the
@@ -192,7 +193,6 @@ def plot_interest_graph():
     graph_widget = canvas.get_tk_widget()
     graph_widget.grid(row=4, column=0, columnspan=5, sticky='nsew')
 
-
 # ---------- UI Screen Drawing Functions ----------
 
 def create_login_screen():
@@ -205,65 +205,63 @@ def create_login_screen():
     # ----- Row 1 -----
 
     # Acount Number / Pin label here
-    label1 = tk.Label(win,text="Account Number / Pin").grid(row=1, column=0)
+    label1 = tk.Label(win,text="Account Number / Pin").grid(row=1, column=0, sticky='nsew')
     # Account number entry here
-    account_number_entry.grid(row=1, column=1)
+    account_number_entry.grid(row=1, column=1, sticky='nsew')
     # Account pin entry here
-    account_pin_entry.grid(row=1, column=2)
+    account_pin_entry.grid(row=1, column=2, sticky='nsew')
     # ----- Row 2 -----
 
     # Buttons 1, 2 and 3 here. Buttons are bound to 'handle_pin_button' function via '<Button-1>' event.
     button1 = tk.Button(win, text='1')
-    button1.grid(row=2, column=0)
+    button1.grid(row=2, column=0, sticky='nsew')
     button1.bind('<Button-1>',handle_pin_button)
     button2 = tk.Button(win, text='2')
-    button2.grid(row=2, column=1)
+    button2.grid(row=2, column=1, sticky='nsew')
     button2.bind('<Button-1>',handle_pin_button)
     button3 = tk.Button(win, text='3')
-    button3.grid(row=2, column=2)
+    button3.grid(row=2, column=2, sticky='nsew')
     button3.bind('<Button-1>',handle_pin_button)
     # ----- Row 3 -----
 
     # Buttons 4, 5 and 6 here. Buttons are bound to 'handle_pin_button' function via '<Button-1>' event.
     button4 = tk.Button(win, text='4')
-    button4.grid(row=3, column=0)
+    button4.grid(row=3, column=0, sticky='nsew')
     button4.bind('<Button-1>',handle_pin_button)
     button5 = tk.Button(win, text='5')
-    button5.grid(row=3, column=1)
+    button5.grid(row=3, column=1, sticky='nsew')
     button5.bind('<Button-1>',handle_pin_button)
     button6 = tk.Button(win, text='6')
-    button6.grid(row=3, column=2)
+    button6.grid(row=3, column=2, sticky='nsew')
     button6.bind('<Button-1>',handle_pin_button)
 
     # ----- Row 4 -----
 
     # Buttons 7, 8 and 9 here. Buttons are bound to 'handle_pin_button' function via '<Button-1>' event.
     button7 = tk.Button(win, text='7')
-    button7.grid(row=4, column=0)
+    button7.grid(row=4, column=0, sticky='nsew')
     button7.bind('<Button-1>',handle_pin_button)
     button8 = tk.Button(win, text='8')
-    button8.grid(row=4, column=1)
+    button8.grid(row=4, column=1, sticky='nsew')
     button8.bind('<Button-1>',handle_pin_button)
     button9 = tk.Button(win, text='9')
-    button9.grid(row=4, column=2)
+    button9.grid(row=4, column=2, sticky='nsew')
     button9.bind('<Button-1>',handle_pin_button)
 
     # ----- Row 5 -----
 
     # Cancel/Clear button here. 'bg' and 'activebackground' should be 'red'. But calls 'clear_pin_entry' function.
     button_ccl = tk.Button(win, text='Cancel/Clear', bg = 'red')
-    button_ccl.grid(row=5, column=0)
+    button_ccl.grid(row=5, column=0, sticky='nsew')
     button_ccl.bind('<Button-1>', clear_pin_entry)
     # Button 0 here
     button0 = tk.Button(win, text='0')
-    button0.grid(row=5, column=1)
+    button0.grid(row=5, column=1, sticky='nsew')
     button0.bind('<Button-1>',handle_pin_button)
     # Login button here. 'bg' and 'activebackground' should be 'green'). Button calls 'log_in' function.
     button_login = tk.Button(win, text='Log In', bg = 'green')
-    button_login.grid(row=5, column=2)
-
-    # ----- Set column & row weights -----
-
+    button_login.grid(row=5, column=2, sticky='nsew')
+    button_login.bind('<Button-1>', log_in)
     # Set column and row weights. There are 5 columns and 6 rows (0..4 and 0..5 respectively)
     win.rowconfigure(0, weight=1)
     win.columnconfigure(0, weight=1)
@@ -285,22 +283,24 @@ def create_account_screen():
     global transaction_text_widget
     global balance_var
 
-    center_window(win, 440, 640)
-    win.winfo_toplevel().title("FedUni Banking")
+    remove_all_widgets()
     # ----- Row 0 -----
 
     # FedUni Banking label here. Font size should be 24.
-    label = tk.Label(win,text="FedUni Banking", font=24).grid(row=0)
+    label = tk.Label(win,text="FedUni Banking", font=("Arial", 24)).grid(row=0, columnspan=3)
 
     # ----- Row 1 -----
 
     # Account number label here
-    account = tk.Label(win, text="Account Number "+str(amount_text))
+    account_lb = tk.Label(win, text="Account Number: ", sticky='nsew')
+    account_lb.grid(row=1, column=0)
     # Balance label here
-
+    balance_lb = tk.Label(win, text="Balance: ", sticky='nsew')
+    balance_lb.grid(row=1, column=1)
     # Log out button here
-    
-
+    logout = tk.Button(win, text="Log Out", sticky='nsew')
+    logout.grid(row=1, column=2)
+    logout.bind('<Button-1>', save_and_log_out)
     # ----- Row 2 -----
 
     # Amount label here
@@ -336,23 +336,10 @@ def create_account_screen():
     # ----- Set column & row weights -----
 
     # Set column and row weights here - there are 5 rows and 5 columns (numbered 0 through 4 not 1 through 5!)
-
-
-def get_screen_size(window):
-    return window.winfo_screenwidth(),window.winfo_screenheight()
-
-
-def get_window_size(window):
-    return window.winfo_reqwidth(),window.winfo_reqheight()
-
-
-def center_window(win, width, height):
-    screenwidth = win.winfo_screenwidth()
-    screenheight = win.winfo_screenheight()
-    size = '%dx%d+%d+%d' % (width, height, (screenwidth - width)/2, (screenheight - height)/2)
-    # print(size)
-    win.geometry(size)
-# ---------- Display Login Screen & Start Main loop ----------
+    win.rowconfigure(0, weight=1)
+    win.columnconfigure(0, weight=1)
+    win.rowconfigure(1, weight=1)
+    win.columnconfigure(1, weight=1)
 
 create_login_screen()
 # create_account_screen()
