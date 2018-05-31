@@ -9,8 +9,9 @@ from bankaccount import BankAccount
 
 win = tk.Tk()
 # Set window size here to '440x640' pixels
+win.geometry('440x640')
 # Set window title here to 'FedUni Banking'
-
+win.winfo_toplevel().title("FedUni Banking")
 # The account number entry and associated variable
 account_number_var = tk.StringVar()
 account_number_entry = tk.Entry(win, textvariable=account_number_var)
@@ -19,7 +20,7 @@ account_number_entry.focus_set()
 # The pin number entry and associated variable.
 # Note: Modify this to 'show' PIN numbers as asterisks (i.e. **** not 1234)
 pin_number_var = tk.StringVar()
-account_pin_entry = tk.Entry(win, text='PIN Number', textvariable=pin_number_var)
+account_pin_entry = tk.Entry(win, show="*", textvariable=pin_number_var)
 
 # The balance label and associated variable
 balance_var = tk.StringVar()
@@ -40,14 +41,20 @@ account = BankAccount()
 def clear_pin_entry(event):
     '''Function to clear the PIN number entry when the Clear / Cancel button is clicked.'''
     # Clear the pin number entry here
+    account_pin_entry.delete(0, 'end')
 
 def handle_pin_button(event):
     '''Function to add the number of the button clicked to the PIN number entry via its associated variable.'''    
-
+    global pin_number_var
+    global account_pin_entry
     # Limit to 4 chars in length
-
+    # pin_val = pin_number_var.get()
+    # print(len(pin_val))
+    # if len(pin_val) < 4:
+    #     account_pin_entry.insert(END, 0)
     # Set the new pin number on the pin_number_var
-    
+    pin_number_var.set(pin_number_var.get()+event.widget['text'])
+    # print(pin_number_var.get())
 
 def log_in(event):
     '''Function to log in to the banking system using a known account number and PIN.'''
@@ -189,11 +196,9 @@ def plot_interest_graph():
 # ---------- UI Screen Drawing Functions ----------
 
 def create_login_screen():
-    '''Function to create the login screen.'''    
-    center_window(win, 440, 640)
-    win.winfo_toplevel().title("FedUni Banking")
+    '''Function to create the login screen.'''
     # ----- Row 0 -----
-    label = tk.Label(win,text="FedUni Banking", font=32).grid(row=0)
+    label = tk.Label(win,text="FedUni Banking", font=("Arial", 32)).grid(row=0,columnspan=3)
 
     # 'FedUni Banking' label here. Font size is 32.
 
@@ -202,48 +207,57 @@ def create_login_screen():
     # Acount Number / Pin label here
     label1 = tk.Label(win,text="Account Number / Pin").grid(row=1, column=0)
     # Account number entry here
-    account = tk.Entry(win)
-    account.grid(row=1, column=1)
+    account_number_entry.grid(row=1, column=1)
     # Account pin entry here
-    pin = tk.Entry(win, show="*")
-    pin.grid(row=1, column=2)
+    account_pin_entry.grid(row=1, column=2)
     # ----- Row 2 -----
 
     # Buttons 1, 2 and 3 here. Buttons are bound to 'handle_pin_button' function via '<Button-1>' event.
     button1 = tk.Button(win, text='1')
     button1.grid(row=2, column=0)
+    button1.bind('<Button-1>',handle_pin_button)
     button2 = tk.Button(win, text='2')
     button2.grid(row=2, column=1)
+    button2.bind('<Button-1>',handle_pin_button)
     button3 = tk.Button(win, text='3')
     button3.grid(row=2, column=2)
+    button3.bind('<Button-1>',handle_pin_button)
     # ----- Row 3 -----
 
     # Buttons 4, 5 and 6 here. Buttons are bound to 'handle_pin_button' function via '<Button-1>' event.
     button4 = tk.Button(win, text='4')
     button4.grid(row=3, column=0)
+    button4.bind('<Button-1>',handle_pin_button)
     button5 = tk.Button(win, text='5')
     button5.grid(row=3, column=1)
+    button5.bind('<Button-1>',handle_pin_button)
     button6 = tk.Button(win, text='6')
     button6.grid(row=3, column=2)
+    button6.bind('<Button-1>',handle_pin_button)
 
     # ----- Row 4 -----
 
     # Buttons 7, 8 and 9 here. Buttons are bound to 'handle_pin_button' function via '<Button-1>' event.
     button7 = tk.Button(win, text='7')
     button7.grid(row=4, column=0)
+    button7.bind('<Button-1>',handle_pin_button)
     button8 = tk.Button(win, text='8')
     button8.grid(row=4, column=1)
+    button8.bind('<Button-1>',handle_pin_button)
     button9 = tk.Button(win, text='9')
     button9.grid(row=4, column=2)
+    button9.bind('<Button-1>',handle_pin_button)
 
     # ----- Row 5 -----
 
     # Cancel/Clear button here. 'bg' and 'activebackground' should be 'red'. But calls 'clear_pin_entry' function.
     button_ccl = tk.Button(win, text='Cancel/Clear', bg = 'red')
     button_ccl.grid(row=5, column=0)
+    button_ccl.bind('<Button-1>', clear_pin_entry)
     # Button 0 here
     button0 = tk.Button(win, text='0')
     button0.grid(row=5, column=1)
+    button0.bind('<Button-1>',handle_pin_button)
     # Login button here. 'bg' and 'activebackground' should be 'green'). Button calls 'log_in' function.
     button_login = tk.Button(win, text='Log In', bg = 'green')
     button_login.grid(row=5, column=2)
@@ -270,16 +284,18 @@ def create_account_screen():
     global amount_label
     global transaction_text_widget
     global balance_var
-    
+
+    center_window(win, 440, 640)
+    win.winfo_toplevel().title("FedUni Banking")
     # ----- Row 0 -----
 
     # FedUni Banking label here. Font size should be 24.
-    
+    label = tk.Label(win,text="FedUni Banking", font=24).grid(row=0)
 
     # ----- Row 1 -----
 
     # Account number label here
-
+    account = tk.Label(win, text="Account Number "+str(amount_text))
     # Balance label here
 
     # Log out button here
@@ -339,4 +355,5 @@ def center_window(win, width, height):
 # ---------- Display Login Screen & Start Main loop ----------
 
 create_login_screen()
+# create_account_screen()
 win.mainloop()
