@@ -31,7 +31,7 @@ balance_label = tk.Label(win, textvariable=balance_var)
 amount_entry = tk.Entry(win)
 
 # The transaction text widget holds text of the accounts transactions
-transaction_text_widget = tk.Text(win, height=10, width=48)
+transaction_text_widget = tk.Text(win, height=10, width=48, font=('Arial',9))
 
 # The bank account object we will work with
 account = BankAccount()
@@ -134,23 +134,30 @@ def perform_deposit():
     global balance_label
     global balance_var
 
-    # Try to increase the account balance and append the deposit to the account file
-    
-        # Get the cash amount to deposit. Note: We check legality inside account's deposit method
 
+    # Try to increase the account balance and append the deposit to the account file
+    try:
+        # Get the cash amount to deposit. Note: We check legality inside account's deposit method
+        account.balance = float(amount_entry.get())+float(account.balance)
         # Deposit funds
         
         # Update the transaction widget with the new transaction by calling account.get_transaction_string()
+        account.transaction_list.append(("Deposit", amount_entry.get()))
         # Note: Configure the text widget to be state='normal' first, then delete contents, then instert new
         #       contents, and finally configure back to state='disabled' so it cannot be user edited.
-
+        transaction_text_widget.configure(state='normal')
+        transaction_text_widget.insert('end', "Deposit\n")
+        transaction_text_widget.insert('end', "{0:.1f}\n".format(float(amount_entry.get())))
+        transaction_text_widget.configure(state='disabled')
         # Change the balance label to reflect the new balance
-
+        balance_var.set("Balance: ${0:.1f}".format(float(account.balance)))
         # Clear the amount entry
-
+        amount_entry.delete(0, 'end')
         # Update the interest graph with our new balance
 
     # Catch and display exception as a 'showerror' messagebox with a title of 'Transaction Error' and the text of the exception
+    except Exception as e:
+        tk.messagebox.showinfo("Transaction Error", e)
         
 def perform_withdrawal():
     '''Function to withdraw the amount in the amount entry from the account balance and add an entry to the transaction list.'''
@@ -314,8 +321,8 @@ def create_account_screen():
     account_lb = tk.Label(win, text="Account Number: $"+account.account_number)
     account_lb.grid(row=1, column=0, sticky='nsew')
     # Balance label here
-    balance_lb = tk.Label(win, text="Balance: "+account.balance)
-    balance_lb.grid(row=1, column=1, sticky='nsew')
+    balance_var.set("Balance: $"+account.balance)
+    balance_label.grid(row=1, column=1, sticky='nsew')
     # Log out button here
     logout = tk.Button(win, text="Log Out", command=save_and_log_out)
     logout.grid(row=1, column=2, columnspan=3, sticky='nsew')
@@ -348,7 +355,11 @@ def create_account_screen():
     transaction_text_widget.grid(row=3, column=0, columnspan=4, sticky='nsew')
     # Note: Set the yscrollcommand to be 'text_scrollbar.set' here so that it actually scrolls the Text widget
     # Note: When updating the transaction text widget it must be set back to 'normal mode' (i.e. state='normal') for it to be edited
-
+    transaction_text_widget.configure(state='normal')
+    for (action,amount) in account.transaction_list:
+        transaction_text_widget.insert('end', action+"\n")
+        transaction_text_widget.insert('end', amount+"\n")
+    transaction_text_widget.configure(state='disabled')
     # Now add the scrollbar and set it to change with the yview of the text widget
 
     text_scrollbar.grid(row=3, column=4, sticky='nsew')
