@@ -54,42 +54,56 @@ def handle_pin_button(event):
     #     account_pin_entry.insert(END, 0)
     # Set the new pin number on the pin_number_var
     pin_number_var.set(pin_number_var.get()+event.widget['text'])
-    # print(pin_number_var.get())
+
 
 def log_in(event):
     '''Function to log in to the banking system using a known account number and PIN.'''
     global account
     global pin_number_var
     global account_num_entry
+    global account_number_var
 
     # Create the filename from the entered account number with '.txt' on the end
-
+    file_name = account_number_var.get()+".txt"
     # Try to open the account file for reading
-    
+    try:
         # Open the account file for reading
-
+        fp = open(file_name, 'r')
+        lines = fp.readlines()
         # First line is account number
-
+        account.account_number = lines[0].strip()
         # Second line is PIN number, raise exceptionk if the PIN entered doesn't match account PIN read 
-
+        psw_txt = lines[1].strip()
+        if psw_txt != pin_number_var.get():
+            raise Exception
+        account.pin_number = psw_txt
         # Read third and fourth lines (balance and interest rate) 
-        
+        account.balance = lines[2].strip()
+        account.interest_rate = lines[3].strip()
         # Section to read account transactions from file - start an infinite 'do-while' loop here
-
+        for i in range(4,len(lines)):
             # Attempt to read a line from the account file, break if we've hit the end of the file. If we
             # read a line then it's the transaction type, so read the next line which will be the transaction amount.
             # and then create a tuple from both lines and add it to the account's transaction_list            
-
+            if i % 2 == 0:
+                action = lines[i].strip()
+            else:
+                amount = lines[i].strip()
+                account.transaction_list.append((action, amount))
         # Close the file now we're finished with it
-        
+        fp.close()
     # Catch exception if we couldn't open the file or PIN entered did not match account PIN
-    
+    except IOError:
+        tk.messagebox.showinfo("Error", "Invalid account number - please try again!")
+        clear_pin_entry(event)
+    except Exception:
         # Show error messagebox and & reset BankAccount object to default...
-
+        tk.messagebox.showinfo("Error", "PIN entered did not match account PIN")
         #  ...also clear PIN entry and change focus to account number entry
-
+        clear_pin_entry(event)
     # Got here without raising an exception? Then we can log in - so remove the widgets and display the account screen
-    create_account_screen()
+    else:
+        create_account_screen()
 
 # ---------- Button Handlers for Account Screen ----------
 
@@ -107,7 +121,9 @@ def save_and_log_out(event):
 
     # Remove all widgets and display the login screen again
     remove_all_widgets()
+    clear_pin_entry(event)
     create_login_screen()
+    # clear_pin_entry()
 
 def perform_deposit():
     '''Function to add a deposit for the amount in the amount entry to the
@@ -292,14 +308,14 @@ def create_account_screen():
     # ----- Row 1 -----
 
     # Account number label here
-    account_lb = tk.Label(win, text="Account Number: ", sticky='nsew')
-    account_lb.grid(row=1, column=0)
+    account_lb = tk.Label(win, text="Account Number: ")
+    account_lb.grid(row=1, column=0, sticky='nsew')
     # Balance label here
-    balance_lb = tk.Label(win, text="Balance: ", sticky='nsew')
-    balance_lb.grid(row=1, column=1)
+    balance_lb = tk.Label(win, text="Balance: ")
+    balance_lb.grid(row=1, column=1, sticky='nsew')
     # Log out button here
-    logout = tk.Button(win, text="Log Out", sticky='nsew')
-    logout.grid(row=1, column=2)
+    logout = tk.Button(win, text="Log Out")
+    logout.grid(row=1, column=2, sticky='nsew')
     logout.bind('<Button-1>', save_and_log_out)
     # ----- Row 2 -----
 

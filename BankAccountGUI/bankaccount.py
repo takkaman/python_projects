@@ -3,7 +3,11 @@ class BankAccount():
     def __init__(self):
         '''Constructor to set account_number to '0', pin_number to an empty string,
            balance to 0.0, interest_rate to 0.0 and transaction_list to an empty list.'''
-        
+        self.account_number = 0
+        self.pin_number = ""
+        self.balance = 0.0
+        self.interest_rate = 0.0
+        self.transaction_list = []
 
     def deposit_funds(self, amount):
         '''Function to deposit an amount to the account balance. Raises an
