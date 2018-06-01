@@ -8,7 +8,6 @@ class TestBankAcount(unittest.TestCase):
     def setUp(self):
         # Create a test BankAccount object
         self.account = BankAccount()
-
         # Provide it with some property values        
         self.account.balance = 1000.0
 
@@ -22,8 +21,7 @@ class TestBankAcount(unittest.TestCase):
         # Your code here to test that depositing an illegal value (like 'bananas'
         # or such - something which is NOT a float) results in an exception being
         # raised.
-        self.account.deposit_funds("AAA")
-        self.assertRaises(Exception, self.account.deposit_funds)
+        self.assertRaises(Exception, self.account.deposit_funds, "AAA")
 
     def test_legal_withdrawal(self):
         # Your code here to test that withdrawing a legal amount subtracts the
@@ -34,8 +32,7 @@ class TestBankAcount(unittest.TestCase):
     def test_illegal_withdrawal(self):
         # Your code here to test that withdrawing an illegal amount (like 'bananas'
         # or such - something which is NOT a float) raises a suitable exception.
-        self.account.withdraw_funds("AAA")
-        self.assertRaises(Exception, self.account.withdraw_funds)
+        self.assertRaises(Exception, self.account.withdraw_funds, "AAA")
 
     def test_insufficient_funds_withdrawal(self):
         # Your code here to test that you can only withdraw funds which are available.
@@ -43,8 +40,8 @@ class TestBankAcount(unittest.TestCase):
         # that can be withdrawn. If you tried to withdraw 600.00 then a suitable exception
         # should be raised and the withdrawal should NOT be applied to the account balance
         # or the account's transaction list.
-        self.account.withdraw_funds(8000)
-        self.assertRaises(Exception, self.account.withdraw_funds)
+        self.assertRaises(Exception, self.account.withdraw_funds, 8000)
 
 # Run the unit tests in the above test case
-unittest.main()       
+if __name__ == '__main__':
+    unittest.main()
