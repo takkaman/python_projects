@@ -12,20 +12,26 @@ class BankAccount():
     def deposit_funds(self, amount):
         '''Function to deposit an amount to the account balance. Raises an
            exception if it receives a value that cannot be cast to float.'''
-        
+        try:
+            self.balance = float(self.balance) + float(amount)
+        except:
+            raise Exception("Amount cannot be cast to float!")
 
     def withdraw_funds(self, amount):
         '''Function to withdraw an amount from the account balance. Raises an
            exception if it receives a value that cannot be cast to float. Raises
            an exception if the amount to withdraw is greater than the available
            funds in the account.'''
-        
+        if float(self.balance) < float(amount):
+            raise Exception('Amount to withdraw is greater than the available funds!')
+        else:
+            self.balance = float(self.balance) - float(amount)
         
     def get_transaction_string(self):
         '''Function to create and return a string of the transaction list. Each transaction
            consists of two lines - either the word "Deposit" or "Withdrawal" on
            the first line, and then the amount deposited or withdrawn on the next line.'''
-
+        return self.transaction_list
 
     def save_to_file(self):
         '''Function to overwrite the account text file with the current account

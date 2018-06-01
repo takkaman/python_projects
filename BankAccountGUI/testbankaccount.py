@@ -2,6 +2,7 @@ import unittest
 
 from bankaccount import BankAccount
 
+
 class TestBankAcount(unittest.TestCase):
 
     def setUp(self):
@@ -9,28 +10,32 @@ class TestBankAcount(unittest.TestCase):
         self.account = BankAccount()
 
         # Provide it with some property values        
-        self.account.balance        = 1000.0
+        self.account.balance = 1000.0
 
     def test_legal_deposit_works(self):
         # Your code here to test that depsositing money using the account's
         # 'deposit_funds' function adds the amount to the balance.
-        
+        self.account.deposit_funds(1000)
+        self.assertEquals(self.account.balance, 2000)
 
     def test_illegal_deposit_raises_exception(self):
         # Your code here to test that depositing an illegal value (like 'bananas'
         # or such - something which is NOT a float) results in an exception being
         # raised.
-        
+        self.account.deposit_funds("AAA")
+        self.assertRaises(Exception, self.account.deposit_funds)
 
     def test_legal_withdrawal(self):
         # Your code here to test that withdrawing a legal amount subtracts the
         # funds from the balance.
-        
+        self.account.withdraw_funds(800)
+        self.assertEquals(self.account.balance, 200)
 
     def test_illegal_withdrawal(self):
         # Your code here to test that withdrawing an illegal amount (like 'bananas'
         # or such - something which is NOT a float) raises a suitable exception.
-        
+        self.account.withdraw_funds("AAA")
+        self.assertRaises(Exception, self.account.withdraw_funds)
 
     def test_insufficient_funds_withdrawal(self):
         # Your code here to test that you can only withdraw funds which are available.
@@ -38,7 +43,8 @@ class TestBankAcount(unittest.TestCase):
         # that can be withdrawn. If you tried to withdraw 600.00 then a suitable exception
         # should be raised and the withdrawal should NOT be applied to the account balance
         # or the account's transaction list.
-
+        self.account.withdraw_funds(8000)
+        self.assertRaises(Exception, self.account.withdraw_funds)
 
 # Run the unit tests in the above test case
 unittest.main()       

@@ -114,12 +114,19 @@ def save_and_log_out():
        all widgets and display the login screen.'''
     global account
 
+    fp = open(account.account_number+".txt", "w+")
+    fp.write(account.account_number+"\n")
+    fp.write(account.pin_number+"\n")
+    fp.write("{0:.1f}\n".format(account.balance))
+    fp.write(account.interest_rate+"\n")
     # Save the account with any new transactions
-    
+    for action, amount in account.get_transaction_string():
+        fp.write(action+"\n")
+        fp.write("{0:.1f}\n".format(float(amount)))
     # Reset the bank acount object
-
+    fp.close()
     # Reset the account number and pin to blank
-
+    account = BankAccount()
     # Remove all widgets and display the login screen again
     remove_all_widgets()
     account_pin_entry.delete(0, 'end')
@@ -134,11 +141,10 @@ def perform_deposit():
     global balance_label
     global balance_var
 
-
     # Try to increase the account balance and append the deposit to the account file
     try:
         # Get the cash amount to deposit. Note: We check legality inside account's deposit method
-        account.balance = float(amount_entry.get())+float(account.balance)
+        account.deposit_funds(amount_entry.get())
         # Deposit funds
         
         # Update the transaction widget with the new transaction by calling account.get_transaction_string()
@@ -154,11 +160,14 @@ def perform_deposit():
         # Clear the amount entry
         amount_entry.delete(0, 'end')
         # Update the interest graph with our new balance
+        plot_interest_graph()
 
     # Catch and display exception as a 'showerror' messagebox with a title of 'Transaction Error' and the text of the exception
     except Exception as e:
         tk.messagebox.showinfo("Transaction Error", e)
-        
+        amount_entry.delete(0, 'end')
+
+
 def perform_withdrawal():
     '''Function to withdraw the amount in the amount entry from the account balance and add an entry to the transaction list.'''
     global account    
@@ -167,23 +176,29 @@ def perform_withdrawal():
     global balance_var
 
     # Try to increase the account balance and append the deposit to the account file
-    
+    try:
         # Get the cash amount to deposit. Note: We check legality inside account's withdraw_funds method
-        
+        account.withdraw_funds(amount_entry.get())
         # Withdraw funds        
-
+        account.transaction_list.append(("Withdrawl", amount_entry.get()))
         # Update the transaction widget with the new transaction by calling account.get_transaction_string()
         # Note: Configure the text widget to be state='normal' first, then delete contents, then instert new
         #       contents, and finally configure back to state='disabled' so it cannot be user edited.
-
+        transaction_text_widget.configure(state='normal')
+        transaction_text_widget.insert('end', "Withdrawl\n")
+        transaction_text_widget.insert('end', "{0:.1f}\n".format(float(amount_entry.get())))
+        transaction_text_widget.configure(state='disabled')
         # Change the balance label to reflect the new balance
-
+        balance_var.set("Balance: ${0:.1f}".format(float(account.balance)))
         # Clear the amount entry
-
+        amount_entry.delete(0, 'end')
         # Update the interest graph with our new balance
+        plot_interest_graph()
 
     # Catch and display any returned exception as a messagebox 'showerror'
-        
+    except Exception as e:
+        tk.messagebox.showinfo("Transaction Error", e)
+        amount_entry.delete(0, 'end')
 
 # ---------- Utility functions ----------
 
@@ -203,8 +218,12 @@ def plot_interest_graph():
     '''Function to plot the cumulative interest for the next 12 months here.'''
 
     # YOUR CODE to generate the x and y lists here which will be plotted
-    x = 1
-    y = 2
+    y = []
+    init = float(account.balance)
+    for i in range(12):
+        init *= 1 + float(account.interest_rate) / 12
+        y.append(init)
+    x = [i for i in range(1,13)]
     # This code to add the plots to the window is a little bit fiddly so you are provided with it.
     # Just make sure you generate a list called 'x' and a list called 'y' and the graph will be plotted correctly.
     figure = Figure(figsize=(5,2), dpi=100)
