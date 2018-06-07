@@ -73,9 +73,18 @@ class TestModels(TestBase):
         db.session.commit()
         af_add = User.query.count()
         self.assertEqual(af_add - bf_add, 1)
-        user = User(username="test1", password="test1")
+        user = User.query.filter_by(username="test1").first()
         db.session.delete(user)
+        time.sleep(5)
         db.session.commit()
+
+    # test whether config data was set up successful
+    def testConfig(self):
+        self.assertFalse(app.config['SQLALCHEMY_DATABASE_URI'] is '12345')
+        self.assertFalse(app.config['SECRET_KEY'] is 'my_precious')
+        self.assertTrue(app.config['DEBUG'] is True)
+
+
 
 if __name__ == '__main__':
     unittest.main()
