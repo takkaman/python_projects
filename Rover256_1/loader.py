@@ -42,7 +42,8 @@ def load_level(filename):
 					planet.tiles[row][col].current_elevation.append(int(e))
 
 			rover = Rover(rover_row, rover_col, planet.tiles[rover_row][rover_col].current_elevation, planet)
-			rover.planet.update_ratio(rover.row, rover.col)
+			rover.planet.tiles[rover.row][rover.col].discovered = True
+			rover.planet.ratio += 1
 
 		except Exception as e:
 			traceback.print_exc()

@@ -1,4 +1,4 @@
-from terrain import *
+from tile import *
 
 
 class Planet:
@@ -12,8 +12,11 @@ class Planet:
 		self.tiles = [[Tile("plain") for i in range(width)] for i in range(height)]
 		self.ratio = 0
 
+	# def update_ratio(self):
+	# 	self.ratio += 1
 
 	def scan_shade(self, x, y):
+		# shades = [[0 for i in range(5)] for i in range(5)]
 		for i in range(-2, 3):
 			line = "|"
 			for j in range(-2, 3):
@@ -29,8 +32,9 @@ class Planet:
 			print(line)
 
 	def scan_elevation(self, x, y, rov_elv):
+		# shades = [[0 for i in range(5)] for i in range(5)]
 		elv = rov_elv
-		#print(elv)
+		# print(elv)
 		for i in range(-2, 3):
 			line = "|"
 			for j in range(-2, 3):
@@ -40,8 +44,12 @@ class Planet:
 				if i == 0 and j == 0:
 					line += "H|"
 				else:
-					# print(len(self.tiles[row][col].elevation()))
+					# if row == 1 and col == 0:
+					# 	print(len(self.tiles[row][col].elevation()))
+					# 	print(len(self.tiles[row][col].elevation()), len(elv))
 					if len(self.tiles[row][col].elevation()) == 2 and len(elv) == 1:  # current plain vs slop
+						# if row == 1 and col == 0:
+						# 	print("AAA")
 						if elv[0] == self.tiles[row][col].elevation()[0]:  # elevation equals to highest slop
 							line += "\|"
 						elif elv[0] == self.tiles[row][col].elevation()[1]:  # elevation equals to lowest slop
@@ -87,9 +95,16 @@ class Planet:
 					new_tile.set_occupant(rov)
 					rov.x = new_row
 					rov.elv = new_tile.elv
-					if not new_tile.explored:
-						new_tile.explored = True
-						self.ratio += 1
+					# if not new_tile.explored:
+					# new_tile.explored = True
+					tmp_x = self.cycle(rov.x+2, self.height)
+					for j in range(-2,3):
+						tmp_y = self.cycle(tmp_y+j, self.width)
+						if not self.tiles[tmp_x][tmp_y].explored:
+							self.tiles[tmp_x][tmp_y].explored = True
+							self.ratio += 1
+
+						# self.ratio += 1
 
 					if new_tile.is_shaded():
 						rov.battery -= 1
@@ -110,9 +125,14 @@ class Planet:
 					new_tile.set_occupant(rov)
 					rov.x = new_row
 					rov.elv = new_tile.elv
-					if not new_tile.explored:
-						new_tile.explored = True
-						self.ratio += 1
+					# if not new_tile.explored:
+					# 	new_tile.explored = True
+					tmp_x = self.cycle(rov.x-2, self.height)
+					for j in range(-2,3):
+						tmp_y = self.cycle(tmp_y+j, self.width)
+						if not self.tiles[tmp_x][tmp_y].explored:
+							self.tiles[tmp_x][tmp_y].explored = True
+							self.ratio += 1
 
 					if new_tile.is_shaded():
 						rov.battery -= 1
@@ -133,9 +153,14 @@ class Planet:
 					new_tile.set_occupant(rov)
 					rov.y = new_col
 					rov.elv = new_tile.elv
-					if not new_tile.explored:
-						new_tile.explored = True
-						self.ratio += 1
+					# if not new_tile.explored:
+					# 	new_tile.explored = True
+					tmp_y = self.cycle(rov.y+2, self.width)
+					for j in range(-2,3):
+						tmp_x = self.cycle(tmp_x+j, self.height)
+						if not self.tiles[tmp_x][tmp_y].explored:
+							self.tiles[tmp_x][tmp_y].explored = True
+							self.ratio += 1
 
 					if new_tile.is_shaded():
 						rov.battery -= 1
@@ -156,9 +181,14 @@ class Planet:
 					new_tile.set_occupant(rov)
 					rov.y = new_col
 					rov.elv = new_tile.elv
-					if not new_tile.explored:
-						new_tile.explored = True
-						self.ratio += 1
+					# if not new_tile.explored:
+					# 	new_tile.explored = True
+					tmp_y = self.cycle(rov.y-2, self.width)
+					for j in range(-2,3):
+						tmp_x = self.cycle(tmp_x+j, self.height)
+						if not self.tiles[tmp_x][tmp_y].explored:
+							self.tiles[tmp_x][tmp_y].explored = True
+							self.ratio += 1
 
 					if new_tile.is_shaded():
 						rov.battery -= 1
@@ -198,3 +228,8 @@ class Planet:
 			return val + bound
 		else:
 			return val
+
+
+
+
+

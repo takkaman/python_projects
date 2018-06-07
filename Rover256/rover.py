@@ -23,3 +23,4 @@ class Rover:
 		self.battery += int(cycles)
 		if self.battery >= 100:
 			self.battery = 100
+

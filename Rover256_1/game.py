@@ -17,7 +17,9 @@ def menu_help():
 	"""
 	Displays the help menu of the game
 	"""
-	print("START <level file> - Starts the game with a provided file.\n"+"QUIT - Quits the game.\n"+"HELP - Shows this message.")
+	print("\nSTART <level file> - Starts the game with a provided file.")
+	print("QUIT - Quits the game")
+	print("HELP - Shows this message\n")
 
 
 def menu_start_game(filepath):
@@ -26,10 +28,10 @@ def menu_start_game(filepath):
 	"""
 	result, rover = load_level(filepath)
 	if not result:
-		print("Unable to load level file")
+		print("\nUnable to load level file\n")
 	else:
 		while True:
-			action = input("Please choose: SCAN, MOVE, STATS, WAIT, FINISH:\n")
+			action = input()
 			if "SCAN" in action:
 				try:
 					mode = action.strip().split(" ")[1]
@@ -43,8 +45,8 @@ def menu_start_game(filepath):
 
 			if action == "STATS":
 				discover_result = float(rover.planet.ratio * 100 / (rover.planet.width * rover.planet.height))
-				print("Explored: %.3f%%" % discover_result)
-				print("Battery: %d/100" % rover.battery)
+				print("\nExplored: %.0f%%" % discover_result)
+				print("Battery: %d/100\n" % rover.battery)
 				continue
 			if "WAIT" in action:
 				try:
@@ -56,7 +58,7 @@ def menu_start_game(filepath):
 					pass
 			if action == "FINISH":
 				discover_result = float(rover.planet.ratio * 100 / (rover.planet.width * rover.planet.height))
-				print("You explored %.3f%% of %s" % (discover_result, rover.planet.name))
+				print("\nYou explored %.0f%% of %s\n" % (discover_result, rover.planet.name))
 				break
 
 
@@ -64,17 +66,17 @@ def menu():
 	"""
 	Start the menu component of the game
 	"""
-	choice = input("Please choose: QUIT, START, HELP:\n")
+	choice = input()
 	if "START" in choice:
 		try:
 			filepath = choice.split(' ')[1]
 			if not os.path.exists(filepath):
-				print("Level file could not be found")
+				print("\nLevel file could not be found\n")
 				return
 			menu_start_game(filepath)
 		except:
 			traceback.print_exc()
-			print("Unable to load level file")
+			print("\nUnable to load level file\n")
 	elif choice == "QUIT":
 		quit()
 	elif choice == "HELP":

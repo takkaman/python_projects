@@ -1,4 +1,4 @@
-from tile import *
+from terrian import *
 
 
 class Planet:

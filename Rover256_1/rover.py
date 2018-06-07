@@ -33,7 +33,9 @@ class Rover:
 		elif direction == "W":
 			self.move_west(cycles)
 
-		self.planet.update_ratio(self.row, self.col)
+		if not self.planet.tiles[self.row][self.col].discovered:
+			self.planet.tiles[self.row][self.col].discovered = True
+			self.planet.ratio += 1
 
 	def move_west(self, cycles):
 		for i in range(1, cycles + 1):
@@ -117,11 +119,18 @@ class Rover:
 
 	def scan(self, mode):
 		if mode == "shade":
+			print( )
 			self.scan_shade()
+			print( )
 		elif mode == "elevation":
+			print( )
 			self.scan_elevation()
+			print( )
 		else:
+			print( )
 			print("Cannot perform this command")
+			print( )
+		self.planet.update_ratio(self.row, self.col)
 
 	def scan_shade(self):
 		for i in range(-1 * self.scan_row_scope, self.scan_row_scope + 1):
