@@ -52,7 +52,7 @@ class Rover:
 
 				if new_tile.is_shaded():
 					self.battery -= 1
-					if self.battery == 0:
+					if self.battery < 0:
 						break
 
 	def move_east(self, cycles):
@@ -70,7 +70,7 @@ class Rover:
 
 				if new_tile.is_shaded():
 					self.battery -= 1
-					if self.battery == 0:
+					if self.battery < 0:
 						break
 
 	def move_south(self, cycles):
@@ -88,7 +88,7 @@ class Rover:
 
 				if new_tile.is_shaded():
 					self.battery -= 1
-					if self.battery == 0:
+					if self.battery < 0:
 						break
 
 	def move_north(self, cycles):
@@ -106,7 +106,7 @@ class Rover:
 
 				if new_tile.is_shaded():
 					self.battery -= 1
-					if self.battery == 0:
+					if self.battery < 0:
 						break
 
 	def wait(self, cycles):

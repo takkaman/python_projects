@@ -27,7 +27,7 @@ def load_level(filename):
 			rover_col = int(lines[4].strip().split(",")[1])
 			rover_row = int(lines[4].strip().split(",")[2])
 
-			if width < 5 or height < 5 or len(lines) != width * height + 7 or width < rover_col or height < rover_row or rover_row < 0 or rover_col < 0:
+			if width < 5 or height < 5 or width < rover_col or height < rover_row or rover_row < 0 or rover_col < 0:
 				return False, None
 
 			planet = Planet(planet_name, width, height)
