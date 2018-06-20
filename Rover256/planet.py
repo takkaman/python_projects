@@ -97,7 +97,7 @@ class Planet:
 
 					if new_tile.is_shaded():
 						rov.battery -= 1
-						if rov.battery == 0:
+						if rov.battery < 0:
 							return rov
 				else:
 					return rov
