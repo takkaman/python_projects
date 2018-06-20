@@ -31,7 +31,12 @@ long_index = 1
 ttl_size = 0
 ttl_time = 0
 min_rate = 99999999
+min_srate = 99999999
+min_lrate = 99999999
+
 max_rate = 0
+max_srate = 0
+max_lrate = 0
 
 i = -1
 with open('short_time.txt', 'w') as fp_st, open('long_time.txt', 'w') as fp_lt, open('short_rate.txt', 'w') as fp_sr, open('long_rate.txt', 'w') as fp_lr:
@@ -92,9 +97,17 @@ with open('short_time.txt', 'w') as fp_st, open('long_time.txt', 'w') as fp_lt, 
                     if delta_t > 1000:
                         fp_lt.write("{0}, {1:.3f}\n".format(ip_tuple, delta_t))
                         fp_lr.write("{0}, {1:.3f}\n".format(ip_tuple, rate))
+                        if rate > max_lrate:
+                            max_lrate = rate
+                        if rate < min_lrate:
+                            min_lrate = rate
                     else:
                         fp_st.write("{0}, {1:.3f}\n".format(ip_tuple, delta_t))
                         fp_sr.write("{0}, {1:.3f}\n".format(ip_tuple, rate))
+                        if rate > max_srate:
+                            max_srate = rate
+                        if rate < min_srate:
+                            min_srate = rate
                     pkt_size[ip_tuple][port_tuple] = 0
                     pkt_size[ip_tuple1][port_tuple1] = 0
                     pkt_time[ip_tuple][port_tuple] = 0
@@ -109,8 +122,8 @@ with open('short_time.txt', 'w') as fp_st, open('long_time.txt', 'w') as fp_lt, 
                     pkt_time[ip_tuple1][port_tuple1] = float(packet.time)
 
             except Exception as e:
-                # pass
-                print(traceback.print_exc())
+                pass
+                # print(traceback.print_exc())
         print("Processing file "+file_name+" finished!")
         # fp.write("Processing file "+file_name+" finished!\n")
     fp_lr.close()
@@ -120,10 +133,16 @@ with open('short_time.txt', 'w') as fp_st, open('long_time.txt', 'w') as fp_lt, 
 
 avg_rate = float(ttl_size / ttl_time)
 
-with open("avg_rate.txt", "w") as fp_avg, open("max_rate.txt", "w") as fp_max, open("min_rate", "w") as fp_min:
+with open("avg_rate.txt", "w") as fp_avg, open("max_rate.txt", "w") as fp_max, open("min_rate.txt", "w") as fp_min:
     print("avg: {0:.2f}, max: {1:.2f}, min: {2:.2f}".format(avg_rate, max_rate, min_rate))
     fp_avg.write("{0:.2f}".format(avg_rate))
     fp_max.write("{0:.2f}".format(max_rate))
     fp_min.write("{0:.2f}".format(min_rate))
+
+with open("min_srate.txt", "w") as fp_smin, open("max_srate.txt", "w") as fp_smax, open("min_lrate.txt", "w") as fp_lmin, open("max_lrate.txt", "w") as fp_lmax:
+    fp_smin.write("min short rate: {0:.2f}".format(min_srate))
+    fp_lmin.write("min long rate: {0:.2f}".format(min_lrate))
+    fp_smax.write("max short rate: {0:.2f}".format(max_srate))
+    fp_lmax.write("max long rate: {0:.2f}".format(max_lrate))
 
 
