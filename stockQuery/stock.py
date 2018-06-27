@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 import pandas as pd
 from googlefinance.client import get_price_data, get_prices_data, get_prices_time_data
 from yahoofinancials import YahooFinancials
@@ -83,70 +84,53 @@ import time, datetime
 ######################
 # yahoo finance
 ######################
-# stock_dict = defaultdict(list)
-# # stocks = ['QCOM', 'CSCO', 'INTC', 'AAPL', 'GOOG']
+stock_dict = defaultdict(list)
+stocks = ['QCOM', 'CSCO', 'INTC', 'AAPL', 'GOOG']
 # stocks = ['AAPL']
-# time_list = []
-#
-# fig1, ax1 = plt.subplots(figsize=(16,9))
-# plt.ion()
-# plt.show()
-# while(True):
-#     for stock in stocks:
-#         ticker = stock
-#         print("processing stock "+stock)
-#         yahoo_financials = YahooFinancials(ticker)
-#         stock_dict[stock].append(yahoo_financials.get_current_price())
-#
-#     # set time
-#     now = datetime.datetime.now()
-#     realtime = str(now.year)+'-'+str(now.month)+'-'+str(now.day)+' '
-#     if now.hour < 10:
-#         realtime += '0'
-#     realtime += str(now.hour)+":"
-#     if now.minute < 10:
-#         realtime += '0'
-#     realtime += str(now.minute)
-#     time_list.append(now)
-#     print(time_list)
-#
-#     # define plot size and layout
-#
-#     ax1.plot(time_list, stock_dict[stock], label=stock)
-#     ax1.set_xlabel('Date Time')
-#     ax1.set_ylabel('Closing price ($)')
-#     ax1.legend()
-#     plt.draw()
-#     plt.pause(.001)
-#     # plt.show(block=False)
-#     time.sleep(20)
-#     # plt.close()
+time_list = []
 
-# plt.show()
+fig1, ax1 = plt.subplots(nrows=5, ncols=1, figsize=(16,9))
 
+def update_stock(i):
+    now = datetime.datetime.now()
+    time_list.append(now)
+    j = 0
+    for stock in stocks:
+        ticker = stock
+        print("processing stock "+stock)
+        yahoo_financials = YahooFinancials(ticker)
+        stock_dict[stock].append(yahoo_financials.get_current_price())
+        ax1[j].clear()
+        ax1[j].plot(time_list, stock_dict[stock], label=stock)
+        ax1[j].set_xlabel('Date Time')
+        ax1[j].set_ylabel('Closing price ($)')
+        j += 1
+
+ani = animation.FuncAnimation(fig1, update_stock, interval=10000)
+plt.show()
 ######################
 # quandl
 ######################
-import quandl
-quandl.ApiConfig.api_key = 'k9Xs_yso27irbXnFsGxz'
-stocks = ['QCOM', 'CSCO', 'INTC', 'AAPL', 'GOOG']
+# import quandl
+# quandl.ApiConfig.api_key = 'k9Xs_yso27irbXnFsGxz'
+# stocks = ['QCOM', 'CSCO', 'INTC', 'AAPL', 'GOOG']
 
-data = quandl.get_table('WIKI/PRICES', ticker = stocks,
-                        qopts = { 'columns': ['ticker', 'date', 'adj_close'] },
-                        date = { 'gte': '2017-10-31', 'lte': '2018-1-31' },
-                        paginate=True)
+# data = quandl.get_table('WIKI/PRICES', ticker = stocks,
+#                         qopts = { 'columns': ['ticker', 'date', 'adj_close'] },
+#                         date = { 'gte': '2017-10-31', 'lte': '2018-1-31' },
+#                         paginate=True)
 
-fig2, ax2 = plt.subplots(nrows=5, ncols=1, figsize=(16,9))
-i = 0
-for stock in stocks:
-    stock_data = data[data['ticker'] == stock]
-    stock_data.set_index('date', inplace=True)
-    quandl_close = stock_data['adj_close']
+# fig2, ax2 = plt.subplots(nrows=5, ncols=1, figsize=(16,9))
+# i = 0
+# for stock in stocks:
+#     stock_data = data[data['ticker'] == stock]
+#     stock_data.set_index('date', inplace=True)
+#     quandl_close = stock_data['adj_close']
 
-    ax2[i].plot(quandl_close.index, quandl_close, label=stock)
-    ax2[i].set_xlabel('Date')
-    ax2[i].set_ylabel('Closing price ($)')
-    ax2[i].legend()
-    i += 1
+#     ax2[i].plot(quandl_close.index, quandl_close, label=stock)
+#     ax2[i].set_xlabel('Date')
+#     ax2[i].set_ylabel('Closing price ($)')
+#     ax2[i].legend()
+#     i += 1
 
-plt.show()
+# plt.show()
