@@ -41,11 +41,14 @@ fail = 0
 prev_fail = False
 i = 0
 j = 0
+cont = 550
 monthly_urls = soup.findAll('loc')
 for monthly_url in monthly_urls:
+
+    ttl = 0
     print(monthly_url.text)
     j += 1
-    if j <= 8: continue
+    if j <= 10: continue
     if 'sitemap_recent' in monthly_url.text or 'sitemap_news' in monthly_url.text or 'sitemap_video_recent' in monthly_url.text:
         # print("skip")
         continue
@@ -57,6 +60,10 @@ for monthly_url in monthly_urls:
     sub_urls = soup.findAll('loc')
     
     for sub_url in sub_urls:
+        ttl += 1
+        print(ttl)
+        if ttl < cont: continue
+        cont = 0
         try:
             print(sub_url.text)
             session = requests.session()
@@ -71,6 +78,7 @@ for monthly_url in monthly_urls:
                 print(sub_url.text+ " title returns none")
                 title = soup.find(attrs={"class":"lede-text-only__hed"})
             print(title)
+            title = title.text.replace(u'’', u"'")
             # extract time
 
             page_time = soup.find(attrs={"class":"lede-text-v2__times"})
@@ -83,10 +91,13 @@ for monthly_url in monthly_urls:
             print(page_time)
             # extract context
             topic = soup.find(attrs={"class": "eyebrow-v2"})
+
+
             if topic is None:
                 topic = np.nan
             else:
                 topic = topic.text.strip().replace('\n', '').replace('\r', '')
+                print("topic "+topic)
 
             body_div = soup.find(attrs={"class":"body-copy-v2"})
             if body_div is None:
@@ -103,8 +114,8 @@ for monthly_url in monthly_urls:
                 if len(abstract) == 0:
                     abstract = "NA"
             content = [sub_url.text, page_time, topic, abstract, context]
-            markets_news_dict[title.text] = content
-            print(str(i)+" Done")
+            markets_news_dict[title] = content
+            print(str(ttl)+" "+str(i)+" Done")
             fail = 0
             i += 1
             if i >= 10000: break

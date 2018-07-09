@@ -1,4 +1,4 @@
-# -*- coding:UTF-8 -*-
+# -*- coding: utf-8 -*-
 
 
 
@@ -11,6 +11,8 @@ import requests
 import traceback
 from random import choice
 import numpy as np
+import re
+from xml.sax.saxutils import quoteattr
 
 ## randomly choose user agent
 desktop_agents = [
@@ -29,8 +31,18 @@ def random_headers():
     return {'User-Agent': choice(desktop_agents),
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'}
 
+def save_csv(news_dict, name, total_num):
+    df = pd.DataFrame.from_dict(news_dict, orient='index')
+    df.index.name = 'Title'
+    df.columns = ['web_url', 'published_date', 'topic', 'abstract', 'context']
+    output_name = name + "_" + str(total_num) + '.csv'
+    df.to_csv(output_name)
+    print("---------------------------------------------")
+    print(output_name + ' is done')
+    print("---------------------------------------------")
+
 ## url of a topic
-url = "https://www.bloomberg.com/feeds/markets/sitemap_index.xml"
+url = "https://www.bloomberg.com/feeds/technology/sitemap_index.xml"
 
 ## parse the url
 session = requests.session()
@@ -47,16 +59,17 @@ failed_sign = 0
 
 monthly_urls = soup_full.findAll('loc')
 for monthly_url in monthly_urls:
-    if failed_sign == 1:
-        break
+    
     news_dict = {}
     crawled = 0
     total_num = 0
     failed = 0
-    ceil = 200
+    total_failed = 0
     print("monthly url: " + monthly_url.text)
+
     j += 1
-    if j <= 4: continue
+    if j <= 7:
+        continue
     if 'sitemap_recent' in monthly_url.text or 'sitemap_news' in monthly_url.text or 'sitemap_video_recent' in monthly_url.text:
         # print("skip")
         continue
@@ -66,10 +79,9 @@ for monthly_url in monthly_urls:
     soup = BeautifulSoup(page1.text, "html.parser")
 
     sub_urls = soup.findAll('loc')
-    print("sub urls: ")
-    print(sub_urls)
+
     name = monthly_url.text.split('/')[5].split('.')[0]
-    name = "news_technology_" + name
+    name = "news_tech_" + name
 
     ## total news in this month
     total = 0
@@ -82,122 +94,125 @@ for monthly_url in monthly_urls:
     print("there are " + str(total) + " news of this month")
     print("---------------------------------------------")
 
-    ## from this news, start crawl
-    index = 0
     for sub_url in sub_urls:
         total_num += 1
 
-        if total_num > index:
+        try:
+            print("sub url: " + sub_url.text)
+            session = requests.session()
+            page = session.get(sub_url.text, headers=headers)
+            soup = BeautifulSoup(page.text, "html.parser")
 
-            try:
-                print("sub url: " + sub_url.text)
-                session = requests.session()
-                page = session.get(sub_url.text, headers=headers)
-                soup = BeautifulSoup(page.text, "html.parser")
+            content = []
 
-                content = []
+            ## decompose
+            for div in soup.find_all('div', attrs={'class': 'disclaimer'}):
+                div.decompose()
 
-                ## Title
-                title = soup.find(attrs={"class": "lede-text-v2__hed"})
-                if title is None:
-                    title = soup.find(attrs={"class": "lede-text-only__hed"})
-                    if title is None:
-                        title = np.nan
-                    else:
-                        title = title.text.encode("utf-8").strip().replace('\n', '').replace('\r', '')
+            for p in soup.find_all('p', attrs={'class': 'news-rsf-contact-author'}):
+                p.decompose()
 
-                else:
-                    title = title.text.strip()
+            for p in soup.find_all('p', attrs={'class': 'news-rsf-contact-editor'}):
+                p.decompose()
+
+            ## Title
+            title = soup.find(attrs={"class": "lede-text-v2__hed"})
+            if title is None:
+                title = soup.find(attrs={"class": "lede-text-only__hed"})
+            if title is None:
+                title = soup.find('h1', attrs={"class": re.compile(r'hed')})
+            if title is None:
+                title = np.nan
+                print("title is None")
+            else:
+                title = title.text.strip()
                 print("title: " + title)
 
-                ## topic
-                topic = soup.find(attrs={"class": "eyebrow-v2"})
-                if topic is None:
-                    topic = np.nan
-                else:
-                    topic = topic.text.strip().replace('\n', '').replace('\r', '')
+            ## topic
+            topic = soup.find(attrs={"class": "eyebrow-v2"})
+            if topic is None:
+                topic = np.nan
+            else:
+                topic = topic.text.strip().replace('\n', '').replace('\r', '')
 
-                ## public time
-                page_time = soup.find(attrs={"class": "lede-text-v2__times"})
-                if page_time is None:
-                    page_time = soup.find(attrs={"class": "lede-text-only__times"})
-                    if page_time is None:
-                        page_time = np.nan
-                    else:
-                        page_time = page_time.find(attrs={'itemprop': "datePublished"}).text
-                else:
-                    page_time = page_time.find(attrs={'itemprop': "datePublished"}).text
+            ## public time
+            page_time = soup.find('time', attrs={'itemprop': "datePublished"})
+            if page_time is None:
+                page_time = np.nan
+                print("Published date is None")
+            else:
+                page_time = page_time.text
                 page_time = page_time.strip().replace('\n', '').replace('\r', '').split('}')[1].strip()
                 print("Public Date: " + page_time)
 
-                ## abstract
+            ## abstract
+            abs = ""
+            abstract = [abs.text.replace(u'’', u"'") for abs in
+                        soup.findAll(attrs={"class": "abstract-v2__item-text"})]
+            if len(abstract) == 0:
                 abstract = [abs.text.replace(u'’', u"'") for abs in
-                            soup.findAll(attrs={"class": "abstract-v2__item-text"})]
+                            soup.findAll(attrs={"class": "abstract__item-text"})]
                 if len(abstract) == 0:
-                    abstract = [abs.text.replace(u'’', u"'") for abs in
-                                soup.findAll(attrs={"class": "abstract__item-text"})]
-                    if len(abstract) == 0:
-                        abstract = np.nan
-                for i in range (0, len(abstract)):
-                    abstract[i] = abstract[i].strip().replace('\n', '').replace('\r', '')
-                    print("Abstract: " + abstract[i])
+                    abstract = soup.find('div', attrs={"class": "lede-text-only__dek"})
+                    if abstract is None:
+                        abs = np.nan
+                        print("Abstract is None")
+                    else:
+                        abstract = abstract.find('span', attrs={"class": "lede-text-only__highlight"})
+                        abs = quoteattr(abstract.text.strip().replace('\n', '').replace('\r', '')).replace('&amp;', '').replace('apos;', "'").replace(u'\xa0', ' ').replace("\'", "'")[1:-2]
+                        print("Abstract: " + abs)
+                else:
+                    for i in range(0, len(abstract)):
+                        abstract[i] = quoteattr(abstract[i].text.strip().replace('\n', '').replace('\r', '')).replace('&amp;', '').replace('apos;', "'").replace(u'\xa0', ' ').replace("\'", "'")[1:-2]
+                        abs = abs + str(abstract[i])
+                        abs = abs + ', '
+                    abs = abs[:-2]
+                    print("Abstract: " + abs)
 
-                ## extract context
-                body_div = soup.find(attrs={"class": "body-copy-v2"})
-                if body_div is None:
-                    body_div = soup.find(attrs={"class": "body-copy"})
-                p_list = body_div.findAll('p')
-                context = ""
-                for p in p_list:
-                    context += p.text.replace(u'’', u"'")
-                context = context.strip().replace('\n', '').replace('\r', '')
-                print("Context: " + context)
+            ## extract context
+            body_div = soup.find(attrs={"class": "body-copy-v2"})
+            if body_div is None:
+                body_div = soup.find(attrs={"class": "body-copy"})
+            p_list = body_div.findAll('p')
+            context = ""
+            for p in p_list:
+                context += p.text.replace(u'’', u"'")
+            context = quoteattr(context.strip().replace('\n', '').replace('\r', '')).replace('&amp;', '').replace(
+                'apos;', "'").replace(u'\xa0', ' ').replace("\'", "'")[1:-2]
+            context = re.sub(' +', ' ', context)
+            print("Context: " + context)
 
-                content = [sub_url.text, page_time, topic, abstract, context]
-                news_dict[title] = content
-                crawled += 1
-                print("Crawled " + str(crawled))
-                print("Falied: " + str(failed))
-                print("Total: " + str(total_num))
-                # time.sleep(random.random()*3)
-                time.sleep(10)
-            except:
-                print(sub_url.text + " raised exception")
-                traceback.print_exc()
-                failed += 1
-                print("Crawled " + str(crawled))
-                print("Falied: " + str(failed))
-                print("Total: " + str(total_num))
-                # time.sleep(random.random()*3)
-                time.sleep(10)
+            content = [sub_url.text, page_time, topic, abs, context]
+            news_dict[title] = content
+            crawled += 1
+            failed = 0
+            print("Crawled " + str(crawled))
+            print("Falied: " + str(failed))
+            print("Total failed: " + str(total_failed))
+            print("Total: " + str(total_num))
+            # time.sleep(random.random()*3)
+            time.sleep(15)
+        except:
+            print(sub_url.text + " raised exception")
+            traceback.print_exc()
+            failed += 1
+            total_failed += 1
+            print("Crawled " + str(crawled))
+            print("Falied: " + str(failed))
+            print("Total failed: " + str(total_failed))
+            print("Total: " + str(total_num))
+            # time.sleep(random.random()*3)
+            time.sleep(15)
 
-            if crawled == ceil or crawled == total:
-                df = pd.DataFrame.from_dict(news_dict, orient='index')
-                df.index.name = 'Title'
-                df.columns = ['web_url', 'published_date', 'topic', 'abstract', 'context']
-                output_name = name + "_" + str(crawled) + '.csv'
-                df.to_csv(output_name)
-                print("---------------------------------------------")
-                print(output_name + ' is done')
-                print("---------------------------------------------")
-                ceil = ceil + 200
-                news_dict = {}
-
-            if failed == 10:
-                df = pd.DataFrame.from_dict(news_dict, orient='index')
-                df.index.name = 'Title'
-                df.columns = ['web_url', 'published_date', 'topic', 'abstract', 'context']
-                output_name = name + "_" + str(crawled) + '.csv'
-                df.to_csv(output_name)
-                print("---------------------------------------------")
-                print(output_name + ' is done')
-                print("---------------------------------------------")
-                failed_sign = 1
-                break
+        if failed == 10:
+            save_csv(news_dict, name, total_num)
+            failed_sign = 1
+            break
 
     if failed_sign == 1:
         break
 
+    save_csv(news_dict, name, total_num)
     # df = pd.DataFrame.from_dict(news_dict, orient='index')
     # df.index.name = 'Title'
     # df.columns = ['url', 'time', 'topic', 'abstract', 'Context']
