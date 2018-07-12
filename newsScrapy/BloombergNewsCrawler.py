@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 
-
-
-
 import urllib.request
 from bs4 import BeautifulSoup
 import time, random
@@ -42,7 +39,7 @@ def save_csv(news_dict, name, total_num):
     print("---------------------------------------------")
 
 ## url of a topic
-url = "https://www.bloomberg.com/feeds/technology/sitemap_index.xml"
+url = "https://www.bloomberg.com/feeds/bbiz/sitemap_index.xml"
 
 ## parse the url
 session = requests.session()
@@ -59,7 +56,7 @@ failed_sign = 0
 
 monthly_urls = soup_full.findAll('loc')
 for monthly_url in monthly_urls:
-    
+
     news_dict = {}
     crawled = 0
     total_num = 0
@@ -68,20 +65,21 @@ for monthly_url in monthly_urls:
     print("monthly url: " + monthly_url.text)
 
     j += 1
-    if j <= 7:
+    if j <= 3:
         continue
     if 'sitemap_recent' in monthly_url.text or 'sitemap_news' in monthly_url.text or 'sitemap_video_recent' in monthly_url.text:
         # print("skip")
         continue
 
     session1 = requests.session()
-    page1 = session1.get(monthly_url.text, headers=headers)
+    headers1 = random_headers()
+    page1 = session1.get(monthly_url.text, headers=headers1)
     soup = BeautifulSoup(page1.text, "html.parser")
 
     sub_urls = soup.findAll('loc')
 
     name = monthly_url.text.split('/')[5].split('.')[0]
-    name = "news_tech_" + name
+    name = "news_bbiz_" + name
 
     ## total news in this month
     total = 0
@@ -100,7 +98,8 @@ for monthly_url in monthly_urls:
         try:
             print("sub url: " + sub_url.text)
             session = requests.session()
-            page = session.get(sub_url.text, headers=headers)
+            headers2 = random_headers()
+            page = session.get(sub_url.text, headers=headers2)
             soup = BeautifulSoup(page.text, "html.parser")
 
             content = []
@@ -131,9 +130,12 @@ for monthly_url in monthly_urls:
             ## topic
             topic = soup.find(attrs={"class": "eyebrow-v2"})
             if topic is None:
+                topic = soup.find(attrs={"class": "eyebrow"})
+            if topic is None:
                 topic = np.nan
             else:
                 topic = topic.text.strip().replace('\n', '').replace('\r', '')
+                print("Topic: " + topic)
 
             ## public time
             page_time = soup.find('time', attrs={'itemprop': "datePublished"})
@@ -152,22 +154,39 @@ for monthly_url in monthly_urls:
             if len(abstract) == 0:
                 abstract = [abs.text.replace(u'’', u"'") for abs in
                             soup.findAll(attrs={"class": "abstract__item-text"})]
-                if len(abstract) == 0:
-                    abstract = soup.find('div', attrs={"class": "lede-text-only__dek"})
+            if len(abstract) == 0:
+                abstract = soup.find('div', attrs={"class": "lede-text-only__dek"})
+                if abstract is None:
+                    abstract = soup.find('div', attrs={"class": "lede-text-v2__dek"})
                     if abstract is None:
                         abs = np.nan
                         print("Abstract is None")
                     else:
-                        abstract = abstract.find('span', attrs={"class": "lede-text-only__highlight"})
-                        abs = quoteattr(abstract.text.strip().replace('\n', '').replace('\r', '')).replace('&amp;', '').replace('apos;', "'").replace(u'\xa0', ' ').replace("\'", "'")[1:-2]
+                        abs = quoteattr(abstract.text.strip().replace('\n', '').replace('\r', '')).replace('&amp;',
+                                                                                                           '').replace(
+                            'apos;', "'").replace(u'\xa0', ' ').replace("\'", "'")
                         print("Abstract: " + abs)
                 else:
-                    for i in range(0, len(abstract)):
-                        abstract[i] = quoteattr(abstract[i].text.strip().replace('\n', '').replace('\r', '')).replace('&amp;', '').replace('apos;', "'").replace(u'\xa0', ' ').replace("\'", "'")[1:-2]
-                        abs = abs + str(abstract[i])
-                        abs = abs + ', '
-                    abs = abs[:-2]
-                    print("Abstract: " + abs)
+                    abstract1 = abstract.find('span', attrs={"class": "lede-text-only__highlight"})
+                    if abstract1 is None:
+                        abs = quoteattr(abstract.text.strip().replace('\n', '').replace('\r', '')).replace('&amp;',
+                                                                                                           '').replace(
+                            'apos;', "'").replace(u'\xa0', ' ').replace("\'", "'")
+                        print("Abstract: " + abs)
+                    else:
+                        abs = quoteattr(abstract1.text.strip().replace('\n', '').replace('\r', '')).replace('&amp;',
+                                                                                                            '').replace(
+                            'apos;', "'").replace(u'\xa0', ' ').replace("\'", "'")
+                        print("Abstract: " + abs)
+            else:
+                for i in range(0, len(abstract)):
+                    abstract[i] = quoteattr(abstract[i].strip().replace('\n', '').replace('\r', '')).replace('&amp;',
+                                                                                                             '').replace(
+                        'apos;', "'").replace(u'\xa0', ' ').replace("\'", "'")
+                    abs = abs + str(abstract[i])
+                    abs = abs + ', '
+                abs = abs[:-2]
+                print("Abstract: " + abs)
 
             ## extract context
             body_div = soup.find(attrs={"class": "body-copy-v2"})
@@ -190,8 +209,8 @@ for monthly_url in monthly_urls:
             print("Falied: " + str(failed))
             print("Total failed: " + str(total_failed))
             print("Total: " + str(total_num))
-            # time.sleep(random.random()*3)
-            time.sleep(15)
+            time.sleep(random.random()*3)
+            # time.sleep(40)
         except:
             print(sub_url.text + " raised exception")
             traceback.print_exc()
@@ -202,12 +221,15 @@ for monthly_url in monthly_urls:
             print("Total failed: " + str(total_failed))
             print("Total: " + str(total_num))
             # time.sleep(random.random()*3)
-            time.sleep(15)
+            time.sleep(20)
 
         if failed == 10:
             save_csv(news_dict, name, total_num)
             failed_sign = 1
             break
+
+        if crawled % 600 == 0:
+            save_csv(news_dict, name, total_num)
 
     if failed_sign == 1:
         break
